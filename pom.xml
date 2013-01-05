@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>eu.janinko.Andaria</groupId>
+  <artifactId>ultimasdk</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>Ultima SDK</name>
+  <url>http://janinko.eu/ultimasdk</url>
+  <description>Ultima SDK</description>
+
+  <developers>
+    <developer>
+      <id>janinko</id>
+      <name>Honza Brázdil</name>
+      <email>janinko.g@gmail.com</email>
+      <url>http://janinko.eu</url>
+      <timezone>Europe/Prague</timezone>
+    </developer>
+  </developers>
+
+  <!--scm>
+    <connection>scm:git:git://github.com/janinko/xmppmuc.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:janinko/xmppmuc.git</developerConnection>
+    <url>https://github.com/janinko/xmppmuc</url>
+  </scm-->
+
+  <!--issueManagement>
+    <system>github</system>
+    <url>https://github.com/janinko/xmppmuc/issues</url>
+  </issueManagement-->
+</project>
