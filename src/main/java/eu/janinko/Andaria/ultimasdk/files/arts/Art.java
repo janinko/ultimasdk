@@ -14,7 +14,7 @@ public class Art {
 	private short[][] bitmap;
 
 	public Art(byte[] data) {
-		flag = data[0] + (data[1] << 8) + (data[2] << 16) + (data[3] << 24);
+		flag = 0xff & data[0] + (0xff & data[1] << 8) + (0xff & data[2] << 16) + (0xff & data[3] << 24);
 		if(flag > 0xFFFF || flag == 0){ // raw
 			loadRaw(data);
 		}else{ // run
@@ -33,19 +33,19 @@ public class Art {
 		}
 		for(int x=0; x < 22; x++){
 			for(int y=21-x; y <= 22+x; y++){
-				bitmap[x][y] = (short) (data[i++] + (data[i++] << 8));
+				bitmap[y][x] = (short) (0xff & data[i++] + (0xff & data[i++] << 8));
 			}
 		}
 		for(int x=22; x < 44; x++){
 			for(int y=x-22; y <= 65-x; y++){
-				bitmap[x][y] = (short) (data[i++] + (data[i++] << 8));
+				bitmap[y][x] = (short) (0xff & data[i++] + (0xff & data[i++] << 8));
 			}
 		}
 	}
 
 	private void loadRun(byte[] data) {
-		width = (short) (data[4] + (data[5] << 8));
-		height = (short) (data[6] + (data[7] << 8));
+		width = (short) (0xff & data[4] + (0xff & data[5] << 8));
+		height = (short) (0xff & data[6] + (0xff & data[7] << 8));
 		bitmap = Graphics.readGraphics(width, height, 8, data);
 	}
 

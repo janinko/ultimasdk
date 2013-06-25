@@ -27,4 +27,8 @@ public class Arts {
 		return art;
 		//BufferedImage image = new BufferedImage(width, height, index);
 	}
+
+	public Art getStatic(int index) throws IOException{
+		return getArt((index + 0x4000) & 0xFFFF);
+	}
 }

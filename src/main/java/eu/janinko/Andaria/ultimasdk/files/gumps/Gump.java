@@ -22,7 +22,7 @@ public class Gump {
 		this.width = width;
 		this.height = height;
 
-		bitmap = Graphics.readGraphics(width, height, 0, data);
+		bitmap = Graphics.readGraphics(width, height, data);
 	}
 
 

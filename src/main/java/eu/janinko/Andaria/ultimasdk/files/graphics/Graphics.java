@@ -9,7 +9,8 @@ import java.awt.image.BufferedImage;
  */
 public class Graphics {
 
-	public static short[][] readGraphics(int width, int height, int pos, byte[] data){
+	public static short[][] readGraphics(int width, int height, byte[] data){
+		int pos = 0;
 		short[][] bitmap = new short[width][height];
 		int[] starts = new int[height];
 
@@ -28,6 +29,44 @@ public class Graphics {
 				//System.out.println("color: " + color + " repeat:" + repeat);
 				for(int i=0; i < repeat; i++){
 					bitmap[x++][y] = (short) color;
+				}
+			}
+		}
+
+		return bitmap;
+	}
+
+	public static short[][] readGraphics(int width, int height, int pos, byte[] data){
+		if(width < 0 || height < 0){
+			System.out.println("err");
+		}
+		short[][] bitmap = new short[width][height];
+		int[] starts = new int[height];
+
+		for(int i=0; i<height; i++){
+			starts[i] = ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8))*2;
+			//System.out.println("starts[" + i + "] = " + starts[i]);
+		}
+		int dstart = pos;
+
+		int y = 0;
+		int x = 0;
+
+		pos = starts[y] + dstart;
+		while(y < height){
+			short offset = (short) ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8));
+			short run = (short) ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8));
+
+			if(offset + run != 0){
+				x += offset;
+				for(int i=0; i<run; i++){
+					bitmap[x++][y] = (short) ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8));
+				}
+			}else{
+				x = 0;
+				y++;
+				if(y < height){
+					pos = starts[y] + dstart;
 				}
 			}
 		}
