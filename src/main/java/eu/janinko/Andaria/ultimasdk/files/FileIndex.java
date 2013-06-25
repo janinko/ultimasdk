@@ -44,7 +44,6 @@ public class FileIndex {
 
 	public DataPack getData(int i) throws IOException{
 		Entry3D entry = index.get(i);
-		System.out.println("l: " + entry.length);
 		if(entry.length <= 0) return null;
 		byte[] data = new byte[entry.length];
 		mulData.seek(entry.offset);
