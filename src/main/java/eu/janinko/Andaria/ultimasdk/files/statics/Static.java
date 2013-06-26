@@ -17,11 +17,11 @@ public class Static {
 		this.xBlock = xBlock;
 		this.yBlock = yBlock;
 
-		id = (short) (data[0] + (data[1] << 8));
+		id = (short) ((0xff & data[0]) + ((0xff & data[1]) << 8));
 		x = data[2];
 		y = data[3];
 		z = data[4];
-		unknown = (short) (data[5] + (data[6] << 8));
+		unknown = (short) ((0xff & data[5]) + ((0xff & data[6]) << 8));
 	}
 
 	public int getX(){
