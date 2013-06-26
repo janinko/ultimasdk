@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.janinko.Andaria.ultimasdk;
 
 import eu.janinko.Andaria.ultimasdk.files.Arts;
@@ -10,6 +6,7 @@ import eu.janinko.Andaria.ultimasdk.files.Hues;
 import eu.janinko.Andaria.ultimasdk.files.Statics;
 import eu.janinko.Andaria.ultimasdk.files.TileData;
 import eu.janinko.Andaria.ultimasdk.files.arts.Art;
+import eu.janinko.Andaria.ultimasdk.files.graphics.Bitmap;
 import eu.janinko.Andaria.ultimasdk.files.hues.Hue;
 import eu.janinko.Andaria.ultimasdk.files.statics.Static;
 import eu.janinko.Andaria.ultimasdk.files.tiledata.ItemData;
@@ -19,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 
@@ -27,7 +25,7 @@ import javax.imageio.ImageIO;
  * @author jbrazdil
  */
 public class UltimaSDK {
-	public static final String uopath="/home/jbrazdil/Ultima/hra/";
+	public static final String uopath="/home/janinko/Ultima/hra/";
 
 	/**
 	 * @param args the command line arguments
@@ -48,15 +46,28 @@ public class UltimaSDK {
 		Hues hues = new Hues(new FileInputStream(huesmul));
 		Arts arts = new Arts(artidx, artmul);
 
-		
-		doArt(arts, tiledata);
-		
-		
+		doHueArt(arts, hues);
 		//System.out.println(tdata);
 	}
 
 	private static void doStatic(Statics statics, TileData tiledata) throws IOException{
 		List<Static> sts = statics.getStaticsOnBlock(192, 256);
+		for(Static s : sts){
+			ItemData item = tiledata.getItem(s.getId());
+			System.out.println(s + "  " + item);
+		}
+	}
+
+	private static void doStatic2(Statics statics, TileData tiledata) throws IOException{
+		List<Static> sts = new ArrayList<Static>();
+		sts.addAll(statics.getStatics(1012, 1014));
+		sts.addAll(statics.getStatics(1014, 1014));
+		sts.addAll(statics.getStatics(1012, 1017));
+		sts.addAll(statics.getStatics(1008, 1017));
+		sts.addAll(statics.getStatics(1016, 1010));
+		sts.addAll(statics.getStatics(1025, 1012));
+		sts.addAll(statics.getStatics(1025, 1013));
+		sts.addAll(statics.getStatics(1026, 1013));
 		for(Static s : sts){
 			ItemData item = tiledata.getItem(s.getId());
 			System.out.println(s + "  " + item);
@@ -87,20 +98,31 @@ public class UltimaSDK {
 	}
 
 	private static void doArt(Arts arts, TileData tiledata) throws IOException{
-		for (ItemData item : tiledata.getItems()) {
-			int id = item.getId();
-			Art art = arts.getStatic(id);
-			System.out.print(id);
+		for (int i = 0; i<150; i++) {
+			Art art = arts.getStatic(i);
 			if(art == null){
-				System.out.println(" x");
 				continue;
 			}
-			BufferedImage image = art.getImage();
+			BufferedImage image = art.getImage().getImage();
 			if (image != null) {
-				File out = new File("/tmp/arts/" + (id) + ".png");
+				File out = new File("/tmp/arts/" + i + ".png");
 				ImageIO.write(image, "png", out);
 			}
-			System.out.println(" ok");
+		}
+	}
+
+	private static void doHueArt(Arts arts, Hues hues) throws IOException{
+		for (int i = 0; i<150; i++) {
+			Art art = arts.getStatic(i);
+			if(art == null){
+				continue;
+			}
+			Bitmap image = art.getImage();
+			image.hue(hues.getHue(i), false);
+			if (image != null) {
+				File out = new File("/tmp/arts/" + i + ".png");
+				ImageIO.write(image.getImage(), "png", out);
+			}
 		}
 	}
 }
