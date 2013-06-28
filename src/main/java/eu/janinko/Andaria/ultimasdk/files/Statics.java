@@ -39,7 +39,7 @@ public class Statics {
 		int blockNumber = xBlock * 512 + yBlock;
 
 		FileIndex.DataPack data = fileIndex.getData(blockNumber);
-		if(data == null) return null;
+		if(data == null) return new ArrayList<Static>();
 
 		int numberOfItems = data.getData().length / 7;
 		List<Static> statics = new ArrayList<Static>(numberOfItems);
