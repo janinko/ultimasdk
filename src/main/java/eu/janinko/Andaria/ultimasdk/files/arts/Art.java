@@ -51,4 +51,20 @@ public class Art {
 	public Bitmap getImage(){
 		return bitmap;
 	}
+
+	public short getWidth() {
+		return width;
+	}
+
+	public void setWidth(short width) {
+		this.width = width;
+	}
+
+	public short getHeight() {
+		return height;
+	}
+
+	public void setHeight(short height) {
+		this.height = height;
+	}
 }
