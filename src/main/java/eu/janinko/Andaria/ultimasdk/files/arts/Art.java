@@ -45,7 +45,7 @@ public class Art {
 		width = (short) ((0xff & data[4]) + ((0xff & data[5]) << 8));
 		height = (short) ((0xff & data[6]) + ((0xff & data[7]) << 8));
 		bitmap = new Bitmap(width, height);
-		bitmap.readGraphics(8, data);
+		bitmap.readColorChunks(8, data);
 	}
 
 	public Bitmap getImage(){

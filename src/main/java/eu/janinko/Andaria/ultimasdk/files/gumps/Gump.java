@@ -17,7 +17,7 @@ public class Gump {
 		this.width = width;
 		this.height = height;
 
-		bitmap.readGraphics(data);
+		bitmap.readColorLines(data);
 	}
 
 

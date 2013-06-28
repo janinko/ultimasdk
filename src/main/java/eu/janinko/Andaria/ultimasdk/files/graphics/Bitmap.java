@@ -11,6 +11,7 @@ public class Bitmap {
 	private int width;
 	private int height;
 	private short[][] bitmap;
+	private short[][] unhued;
 	
 	public Bitmap(int width, int height){
 		if(width < 0) throw new IllegalArgumentException("Width can't be less then zero, is " + width);
@@ -20,18 +21,22 @@ public class Bitmap {
 		this.width = width;
 		this.height = height;
 
-		for(int x=0; x<width; x++) for(int y=0; y<height; y++){
-			bitmap[x][y] = (short) 0x8000;
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				bitmap[x][y] = (short) 0x8000;
+			}
 		}
 	}
 
-	public void readGraphics(byte[] data){
-		int pos = 0;
+	public void readColorLines(byte[] data){
+		this.readColorChunks(0, data);
+	}
+	
+	public void readColorLines(int pos, byte[] data){
 		int[] starts = new int[height];
 
 		for(int i=0; i<height; i++){
 			starts[i] = ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8) + ((0xff & data[pos++]) << 16) + ((0xff & data[pos++]) << 24))*4;
-			//System.out.println("starts[" + i + "] = " + starts[i]);
 		}
 
 		for(int y = 0; y < height; y++){
@@ -49,12 +54,11 @@ public class Bitmap {
 		}
 	}
 
-	public void readGraphics(int pos, byte[] data){
+	public void readColorChunks(int pos, byte[] data){
 		int[] starts = new int[height];
 
 		for(int i=0; i<height; i++){
 			starts[i] = ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8))*2;
-			//System.out.println("starts[" + i + "] = " + starts[i]);
 		}
 		int dstart = pos;
 
@@ -97,13 +101,20 @@ public class Bitmap {
 	}
 
 	public void hue(Hue hue, boolean partial){
+		if(unhued == null){
+			unhued = bitmap.clone();
+		}
+		if(hue == null){
+			bitmap = unhued.clone();
+			return;
+		}
 		for(int x=0; x<width; x++){
 			for(int y=0; y<height; y++){
-				int alpha = (bitmap[x][y] & 0x8000) >>> 15;
+				int alpha = (unhued[x][y] & 0x8000) >>> 15;
 				if(alpha == 1) continue;
-				int red = (bitmap[x][y] & 0x7c00) >>> 10;
-				int green = (bitmap[x][y] & 0x3e0) >>> 5;
-				int blue = (bitmap[x][y] & 0x1f);
+				int red = (unhued[x][y] & 0x7c00) >>> 10;
+				int green = (unhued[x][y] & 0x3e0) >>> 5;
+				int blue = (unhued[x][y] & 0x1f);
 				
 				if(partial && red == green && green == blue){
 					bitmap[x][y] = (short) hue.getColors()[red];
