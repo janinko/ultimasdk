@@ -1,10 +1,10 @@
 package eu.janinko.Andaria.ultimasdk.files;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import eu.janinko.Andaria.ultimasdk.files.FileIndex.DataPack;
 import eu.janinko.Andaria.ultimasdk.files.gumps.Gump;
+import java.io.InputStream;
 
 /**
  *
@@ -13,8 +13,8 @@ import eu.janinko.Andaria.ultimasdk.files.gumps.Gump;
 public class Gumps {
 	FileIndex fileIndex;
 
-	public Gumps(File gumpIdx, File gumpMul) throws FileNotFoundException, IOException{
-		fileIndex = new FileIndex(gumpIdx, gumpMul, 0x10000);
+	public Gumps(InputStream gumpidx, File gumpmul) throws IOException{
+		fileIndex = new FileIndex(gumpidx, gumpmul, 0x10000);
 	}
 
 	public Gump getGump(int index) throws IOException{
@@ -23,11 +23,8 @@ public class Gumps {
 		int width = (data.getExtra() >> 16) & 0xFFFF;
 		int height = data.getExtra() & 0xFFFF;
 
-		//System.out.println("w: " + width + " h: "+ height + " d:" + Arrays.toString(data.getData()));
-
-		Gump gump = new Gump(width, height, data.getData());
+		Gump gump = new Gump(width, height, data.getNewStream());
 
 		return gump;
-		//BufferedImage image = new BufferedImage(width, height, index);
 	}
 }

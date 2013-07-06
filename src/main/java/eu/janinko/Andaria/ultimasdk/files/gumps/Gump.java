@@ -1,18 +1,19 @@
 package eu.janinko.Andaria.ultimasdk.files.gumps;
 
+import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataInputStream;
 import eu.janinko.Andaria.ultimasdk.files.graphics.Bitmap;
-import java.awt.image.BufferedImage;
+import eu.janinko.Andaria.ultimasdk.files.graphics.Image;
+import java.io.IOException;
 
 /**
  *
  * @author Honza Brázdil <jbrazdil@redhat.com>
  */
-public class Gump {
+public class Gump extends Image{
 	private int width;
 	private int height;
-	private Bitmap bitmap;
 
-	public Gump(int width, int height, byte[] data) {
+	public Gump(int width, int height, RandomAccessLEDataInputStream data) throws IOException {
 		bitmap = new Bitmap(width, height);
 		this.width = width;
 		this.height = height;
@@ -20,8 +21,11 @@ public class Gump {
 		bitmap.readColorLines(data);
 	}
 
+	public int getWidth() {
+		return width;
+	}
 
-	public BufferedImage getImage(){
-		return bitmap.getImage();
+	public int getHeight() {
+		return height;
 	}
 }

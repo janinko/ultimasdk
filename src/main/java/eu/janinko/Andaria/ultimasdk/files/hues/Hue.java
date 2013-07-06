@@ -1,9 +1,8 @@
 package eu.janinko.Andaria.ultimasdk.files.hues;
 
-import eu.janinko.Andaria.ultimasdk.LittleEndianDataInputStream;
-import eu.janinko.Andaria.ultimasdk.Utils;
-import eu.janinko.Andaria.ultimasdk.files.TileData;
-import eu.janinko.Andaria.ultimasdk.files.tiledata.TileFlags;
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
+import eu.janinko.Andaria.ultimasdk.utils.Utils;
+import eu.janinko.Andaria.ultimasdk.files.graphics.Color;
 import java.io.IOException;
 
 /**
@@ -12,14 +11,18 @@ import java.io.IOException;
  */
 public final class Hue {
 	private int id;
-	private int[] colors = new int[34];
+	private Color[] colors = new Color[32];
+	private short tableStart;
+	private short tableEnd;
 	private String name;
 
 
 	public Hue(LittleEndianDataInputStream in) throws IOException {
-		for(int i=0; i<34; i++){
-			colors[i] = in.readShort();
+		for(int i=0; i<32; i++){
+			colors[i] = Color.getInstance(in.readShort());
 		}
+		tableStart = in.readShort();
+		tableEnd = in.readShort();
 		this.setName(Utils.readName(in));
 	}
 
@@ -31,12 +34,16 @@ public final class Hue {
 		this.id = id;
 	}
 
-	public int[] getColors() {
+	public Color[] getColors() {
 		return colors;
 	}
 
-	public void setColors(int[] colors) {
+	public void setColors(Color[] colors) {
 		this.colors = colors;
+	}
+
+	public Color getColor(int id) {
+		return colors[id];
 	}
 
 	public String getName() {
@@ -56,17 +63,17 @@ public final class Hue {
 		sb.append(' ');
 		for(int i=0; i<32; i++){
 			sb.append('[');
-			if(((colors[i] & 0x8000) >>> 15) == 1){ // alpha
+			if(colors[i].isAlpha()){ // alpha
 				sb.append('A');
 			}else{
 				sb.append(' ');
 			}
 			sb.append(' ');
-			sb.append(Utils.convertColor5to8((colors[i] & 0x7c00) >>> 10)); // red
+			sb.append(colors[i].getRed()); // red
 			sb.append(' ');
-			sb.append(Utils.convertColor5to8((colors[i] & 0x3e0) >>> 5)); // green
+			sb.append(colors[i].getGreen()); // green
 			sb.append(' ');
-			sb.append(Utils.convertColor5to8(colors[i] & 0x1f)); // blue
+			sb.append(colors[i].getBlue()); // blue
 			sb.append("] ");
 		}
 		return sb.toString();

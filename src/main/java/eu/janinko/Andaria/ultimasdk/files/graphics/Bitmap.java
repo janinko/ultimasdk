@@ -1,8 +1,9 @@
 package eu.janinko.Andaria.ultimasdk.files.graphics;
 
-import eu.janinko.Andaria.ultimasdk.Utils;
+import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataInputStream;
 import eu.janinko.Andaria.ultimasdk.files.hues.Hue;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * @author janinko
@@ -10,76 +11,79 @@ import java.awt.image.BufferedImage;
 public class Bitmap {
 	private int width;
 	private int height;
-	private short[][] bitmap;
-	private short[][] unhued;
+	private Color[][] bitmap;
+	private Color[][] unhued;
+
+	public Bitmap(Bitmap o){
+		this.width = o.width;
+		this.height = o.height;
+		this.bitmap = o.bitmap.clone();
+		if(o.unhued != null){
+			this.unhued = o.unhued.clone();
+		}
+	}
 	
 	public Bitmap(int width, int height){
 		if(width < 0) throw new IllegalArgumentException("Width can't be less then zero, is " + width);
 		if(height < 0) throw new IllegalArgumentException("Height can't be less then zero, is " + height);
 		
-		this.bitmap = new short[width][height];
+		this.bitmap = new Color[width][height];
 		this.width = width;
 		this.height = height;
 
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				bitmap[x][y] = (short) 0x8000;
+				bitmap[x][y] = Color.ALPHA;
 			}
 		}
 	}
 
-	public void readColorLines(byte[] data){
-		this.readColorChunks(0, data);
-	}
-	
-	public void readColorLines(int pos, byte[] data){
+	public void readColorLines(RandomAccessLEDataInputStream data) throws IOException{
 		int[] starts = new int[height];
 
 		for(int i=0; i<height; i++){
-			starts[i] = ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8) + ((0xff & data[pos++]) << 16) + ((0xff & data[pos++]) << 24))*4;
+			starts[i] = data.readInt()*4;
 		}
 
 		for(int y = 0; y < height; y++){
 			int x = 0;
-			pos = starts[y];
-			//System.out.println("pos: " + pos);
+			data.seek(starts[y]);
 			while(x < width){
-				int color = (0xff & data[pos++]) + ((0xff & data[pos++]) << 8);
-				int repeat = (0xff & data[pos++]) + ((0xff & data[pos++]) << 8);
-				//System.out.println("color: " + color + " repeat:" + repeat);
+				short color = data.readShort();
+				int repeat = data.readUnsignedShort();
 				for(int i=0; i < repeat; i++){
-					bitmap[x++][y] = (short) color;
+					bitmap[x++][y] = Color.getInstance(color);
 				}
 			}
 		}
 	}
 
-	public void readColorChunks(int pos, byte[] data){
+	public void readColorChunks(RandomAccessLEDataInputStream data) throws IOException{
 		int[] starts = new int[height];
 
 		for(int i=0; i<height; i++){
-			starts[i] = ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8))*2;
+			starts[i] = data.readUnsignedShort() * 2;
 		}
-		int dstart = pos;
+		int dstart = data.getPosition();
 
 		int y = 0;
 		int x = 0;
 
-		pos = starts[y] + dstart;
+		data.seek(starts[y] + dstart);
 		while(y < height){
-			short offset = (short) ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8));
-			short run = (short) ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8));
+			int offset = data.readUnsignedShort();
+			int run = data.readUnsignedShort();
 
 			if(offset + run != 0){
 				x += offset;
 				for(int i=0; i<run; i++){
-					bitmap[x++][y] = (short) ((0xff & data[pos++]) + ((0xff & data[pos++]) << 8));
+					bitmap[x++][y] = Color.getInstance(data.readShort());
 				}
 			}else{
 				x = 0;
 				y++;
 				if(y < height){
-					pos = starts[y] + dstart;
+					data.seek(starts[y] + dstart);
 				}
 			}
 		}
@@ -89,12 +93,7 @@ public class Bitmap {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
 		for(int x=0; x<width; x++){
 			for(int y=0; y<height; y++){
-				int alpha = 255 - ((bitmap[x][y] & 0x8000) >>> 15)*255;
-				int red = Utils.convertColor5to8((bitmap[x][y] & 0x7c00) >>> 10);
-				int green = Utils.convertColor5to8((bitmap[x][y] & 0x3e0) >>> 5);
-				int blue = Utils.convertColor5to8(bitmap[x][y] & 0x1f);
-				int argb = (alpha << 24) + (red << 16) + (green << 8) + blue;
-				image.setRGB(x, y, argb);
+				image.setRGB(x, y, bitmap[x][y].getAGBR());
 			}
 		}
 		return image;
@@ -110,17 +109,13 @@ public class Bitmap {
 		}
 		for(int x=0; x<width; x++){
 			for(int y=0; y<height; y++){
-				int alpha = (unhued[x][y] & 0x8000) >>> 15;
-				if(alpha == 1) continue;
-				int red = (unhued[x][y] & 0x7c00) >>> 10;
-				int green = (unhued[x][y] & 0x3e0) >>> 5;
-				int blue = (unhued[x][y] & 0x1f);
+				Color color = unhued[x][y];
+				if(color.isAlpha()) continue;
 				
-				if(partial && red == green && green == blue){
-					bitmap[x][y] = (short) hue.getColors()[red];
+				if(partial && color.isGrayscale()){
+					bitmap[x][y] = hue.getColor(color.get5Average());
 				}else if(!partial){
-					int value = (red + green + blue) / 3;
-					bitmap[x][y] = (short) hue.getColors()[value];
+					bitmap[x][y] = hue.getColor(color.get5Average());
 				}
 			}
 		}
@@ -139,11 +134,15 @@ public class Bitmap {
 			this.y = y;
 		}
 
-		public short getColor(){
+		public Color getColor(){
 			return bitmap[x][y];
 		}
 
 		public void setColor(short color){
+			bitmap[x][y] = Color.getInstance(color);
+		}
+
+		public void setColor(Color color){
 			bitmap[x][y] = color;
 		}
 	}

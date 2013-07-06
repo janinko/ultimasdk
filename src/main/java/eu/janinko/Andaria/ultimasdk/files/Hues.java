@@ -1,6 +1,6 @@
 package eu.janinko.Andaria.ultimasdk.files;
 
-import eu.janinko.Andaria.ultimasdk.LittleEndianDataInputStream;
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
 import eu.janinko.Andaria.ultimasdk.files.hues.Hue;
 import java.io.IOException;
 import java.io.InputStream;

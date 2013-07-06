@@ -2,10 +2,9 @@
 package eu.janinko.Andaria.ultimasdk.files;
 
 import eu.janinko.Andaria.ultimasdk.files.arts.Art;
-import eu.janinko.Andaria.ultimasdk.files.gumps.Gump;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author janinko
@@ -13,19 +12,21 @@ import java.io.IOException;
 public class Arts {
 	private FileIndex fileIndex;
 
-	public Arts(File artidx, File artmul) throws FileNotFoundException, IOException{
-		fileIndex = new FileIndex(artidx, artmul, 0x10000);
+	public Arts(InputStream artidx, File artmul) throws IOException{
+		fileIndex = new FileIndex(artidx, artmul, 0x10007);
 	}
 
-	public Art getArt(int index) throws IOException{
+	private Art getArt(int index) throws IOException{
 		FileIndex.DataPack data =  fileIndex.getData(index);
 		if(data == null) return null;
 
-
-		Art art = new Art(data.getData());
+		Art art = new Art(data.getNewStream());
 
 		return art;
-		//BufferedImage image = new BufferedImage(width, height, index);
+	}
+
+	public Art getMap(int index) throws IOException{
+		return getArt((index) & 0xFFFF);
 	}
 
 	public Art getStatic(int index) throws IOException{
