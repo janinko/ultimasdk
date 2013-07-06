@@ -1,27 +1,30 @@
 package eu.janinko.Andaria.ultimasdk.files.statics;
 
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
+import java.io.IOException;
+
 /**
  * @author Honza Brázdil <jbrazdil@redhat.com>
  */
 public class Static {
-	private short id;
-	private byte x;
-	private byte y;
+	private int id;
+	private int x;
+	private int y;
 	private byte z;
 	private short unknown;
 
 	private int xBlock;
 	private int yBlock;
 
-	public Static(int xBlock, int yBlock, byte[] data) {
+	public Static(int xBlock, int yBlock, LittleEndianDataInputStream data) throws IOException {
 		this.xBlock = xBlock;
 		this.yBlock = yBlock;
 
-		id = (short) ((0xff & data[0]) + ((0xff & data[1]) << 8));
-		x = data[2];
-		y = data[3];
-		z = data[4];
-		unknown = (short) ((0xff & data[5]) + ((0xff & data[6]) << 8));
+		id = data.readUnsignedShort();
+		x = data.readUnsignedByte();
+		y = data.readUnsignedByte();
+		z = data.readByte();
+		unknown = data.readShort();
 	}
 
 	public int getX(){

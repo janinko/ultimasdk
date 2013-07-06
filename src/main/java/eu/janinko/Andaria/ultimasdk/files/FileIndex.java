@@ -1,11 +1,11 @@
 package eu.janinko.Andaria.ultimasdk.files;
 
-import eu.janinko.Andaria.ultimasdk.LittleEndianDataInputStream;
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
+import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataInputStream;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
@@ -13,23 +13,18 @@ import java.util.ArrayList;
  *
  * @author Honza Brázdil <jbrazdil@redhat.com>
  */
-public class FileIndex {
-	ArrayList<Entry3D> index;
-	File idxFile;
-	File mulFile;
+class FileIndex {
+	private ArrayList<Entry3D> index;
 
-	RandomAccessFile mulData;
+	private RandomAccessFile mulData;
 
-	public FileIndex(File idxFile, File mulFile, int length) throws FileNotFoundException, IOException{
+	public FileIndex(InputStream idxStream, File mulFile, int length) throws IOException{
 		index = new ArrayList<Entry3D>(length);
-		this.idxFile = idxFile;
-		this.mulFile = mulFile;
 
-		LittleEndianDataInputStream idxData = new LittleEndianDataInputStream(new FileInputStream(idxFile));
+		LittleEndianDataInputStream idxData = new LittleEndianDataInputStream(idxStream);
 		mulData= new RandomAccessFile(mulFile,"r");
 
 		boolean reading = true;
-		int i=0;
 		while(reading){
 			try{
 				int offset = idxData.readInt();
@@ -62,6 +57,10 @@ public class FileIndex {
 
 		public byte[] getData() {
 			return data;
+		}
+
+		public RandomAccessLEDataInputStream getNewStream(){
+			return new RandomAccessLEDataInputStream(data);
 		}
 
 		public int getExtra() {

@@ -1,11 +1,12 @@
 package eu.janinko.Andaria.ultimasdk.files;
 
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
 import eu.janinko.Andaria.ultimasdk.files.statics.Static;
+import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 public class Statics {
 	private FileIndex fileIndex;
 
-	public Statics(File staidx, File statics) throws FileNotFoundException, IOException{
+	public Statics(InputStream staidx, File statics) throws IOException{
 		fileIndex = new FileIndex(staidx, statics, 0x60000);
 	}
 
@@ -43,8 +44,9 @@ public class Statics {
 
 		int numberOfItems = data.getData().length / 7;
 		List<Static> statics = new ArrayList<Static>(numberOfItems);
+		RandomAccessLEDataInputStream dataStream = data.getNewStream();
 		for(int i=0; i < numberOfItems; i++){
-			statics.add(new Static(xBlock, yBlock, Arrays.copyOfRange(data.getData(), i*7, i*7+7)));
+			statics.add(new Static(xBlock, yBlock, dataStream));
 		}
 
 		return statics;
