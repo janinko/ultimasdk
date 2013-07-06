@@ -1,4 +1,4 @@
-package eu.janinko.Andaria.ultimasdk;
+package eu.janinko.Andaria.ultimasdk.utils;
 
 import java.io.DataOutput;
 import java.io.FilterOutputStream;

@@ -1,4 +1,4 @@
-package eu.janinko.Andaria.ultimasdk;
+package eu.janinko.Andaria.ultimasdk.utils;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -136,7 +136,7 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 
 	 private DataInputStream d; // to get at high level readFully methods of
 	 // DataInputStream
-	 private InputStream in; // to get at the low-level read methods of
+	 protected InputStream in; // to get at the low-level read methods of
 	 // InputStream
 	 private byte w[]; // work array for buffering input
 }

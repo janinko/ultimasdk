@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.janinko.Andaria.ultimasdk;
+package eu.janinko.Andaria.ultimasdk.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,13 +23,5 @@ public class Utils {
 
 	public static void writeName(OutputStream out, String name) throws IOException {
 		out.write(name.getBytes(chs), 0, 20);
-	}
-
-	public static int convertColor5to8(int c){
-		return Math.round(((float) c) * 255.0f / 31.0f);
-	}
-
-	public static int convertColor8to5(int c){
-		return c / 8;
 	}
 }

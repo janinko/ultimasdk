@@ -1,7 +1,7 @@
 package eu.janinko.Andaria.ultimasdk.files;
 
-import eu.janinko.Andaria.ultimasdk.LittleEndianDataInputStream;
-import eu.janinko.Andaria.ultimasdk.LittleEndianDataOutputStream;
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataOutputStream;
 import eu.janinko.Andaria.ultimasdk.files.tiledata.ItemData;
 import eu.janinko.Andaria.ultimasdk.files.tiledata.LandData;
 import java.io.IOException;
