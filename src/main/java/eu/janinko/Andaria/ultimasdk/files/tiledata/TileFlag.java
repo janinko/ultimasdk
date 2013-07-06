@@ -13,16 +13,16 @@ public enum TileFlag {
 	Wall        (0x00000010),
 	Damaing     (0x00000020),
 	Impassable  (0x00000040),
-	Liquid      (0x00000080),
+	Liquid      (0x00000080), // WET
 	Unknown1    (0x00000100),
 	Surface     (0x00000200),
 	Bridge      (0x00000400),
-	Generic     (0x00000800),
+	Generic     (0x00000800), // Stackable?
 	Window      (0x00001000),
 	NoShoot     (0x00002000),
 	ArticleA    (0x00004000),
 	ArticleAn   (0x00008000),
-	Internal    (0x00010000), // Mongen
+	Internal    (0x00010000), // Mongen  (things like hair, beards, etc)
 	Foliage     (0x00020000),
 	PartialHue  (0x00040000),
 	Unknown2    (0x00080000),
