@@ -37,6 +37,16 @@ class FileIndex {
 		}
 	}
 
+	public FileIndex(int blockSize, File mulFile, int length) throws IOException{
+		index = new ArrayList<Entry3D>(length);
+
+		mulData= new RandomAccessFile(mulFile,"r");
+
+		for(int i=0; i < length; i++){
+			index.add(new Entry3D(i*blockSize, blockSize, 0));
+		}
+	}
+
 	public DataPack getData(int i) throws IOException{
 		Entry3D entry = index.get(i);
 		if(entry.length <= 0) return null;
