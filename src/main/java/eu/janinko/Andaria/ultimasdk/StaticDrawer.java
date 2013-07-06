@@ -11,9 +11,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,7 +64,7 @@ public class StaticDrawer {
 	public void putArt(Art art, int x, int y, int z){
 		int gx = width / 2 + getRelGX(x, y) + getArtRelGX(art);
 		int gy = height / 2 + getRelGY(x, y) + getArtRelGY(art) + z*VERTICAL_SHIFT;
-		canvas.drawImage(art.getImage().getImage(), gx, gy, null);
+		canvas.drawImage(art.getImage(), gx, gy, null);
 	}
 
 	private BufferedImage getImage() {
@@ -81,8 +79,8 @@ public class StaticDrawer {
 		File statics0 = new File(uopath + "statics0.mul");
 		File tiledatamul = new File(uopath + "tiledata.mul");
 
-		Arts arts = new Arts(artidx, artmul);
-		Statics statics = new Statics(staidx0, statics0);
+		Arts arts = new Arts(new FileInputStream(artidx), artmul);
+		Statics statics = new Statics(new FileInputStream(staidx0), statics0);
 		TileData tiledata = new TileData(new FileInputStream(tiledatamul));
 
 		List<Static> sts = new ArrayList<Static>();

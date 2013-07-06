@@ -41,10 +41,10 @@ public class UltimaSDK {
 		File statics0 = new File(uopath + "statics0.mul");
 
 		TileData tiledata = new TileData(new FileInputStream(tiledatamul));
-		Statics statics = new Statics(staidx0, statics0);
-		Gumps gumps = new Gumps(gumpidx, gumpart);
+		Statics statics = new Statics(new FileInputStream(staidx0), statics0);
+		Gumps gumps = new Gumps(new FileInputStream(gumpidx), gumpart);
 		Hues hues = new Hues(new FileInputStream(huesmul));
-		Arts arts = new Arts(artidx, artmul);
+		Arts arts = new Arts(new FileInputStream(artidx), artmul);
 
 		doHueArt(arts, hues);
 		//System.out.println(tdata);
@@ -103,7 +103,7 @@ public class UltimaSDK {
 			if(art == null){
 				continue;
 			}
-			BufferedImage image = art.getImage().getImage();
+			BufferedImage image = art.getImage();
 			if (image != null) {
 				File out = new File("/tmp/arts/" + i + ".png");
 				ImageIO.write(image, "png", out);
@@ -117,12 +117,10 @@ public class UltimaSDK {
 			if(art == null){
 				continue;
 			}
-			Bitmap image = art.getImage();
+			Bitmap image = art.getBitmap();
 			image.hue(hues.getHue(i), false);
-			if (image != null) {
-				File out = new File("/tmp/arts/" + i + ".png");
-				ImageIO.write(image.getImage(), "png", out);
-			}
+			File out = new File("/tmp/arts/" + i + ".png");
+			ImageIO.write(image.getImage(), "png", out);
 		}
 	}
 }
