@@ -62,7 +62,12 @@ public class Bitmap {
 		int[] starts = new int[height];
 
 		for(int i=0; i<height; i++){
-			starts[i] = data.readUnsignedShort() * 2;
+			try{
+				starts[i] = data.readUnsignedShort() * 2;
+			}catch(Exception ex){
+				System.out.println("ex");
+				return;
+			}
 		}
 		int dstart = data.getPosition();
 

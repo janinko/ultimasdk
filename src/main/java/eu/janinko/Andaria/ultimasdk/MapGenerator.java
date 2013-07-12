@@ -39,8 +39,8 @@ public class MapGenerator {
 
 		StaticPositionComparator comparator = new StaticPositionComparator(tiledata);
 
-		BufferedImage image = new BufferedImage(768*8, 512*8, BufferedImage.TYPE_4BYTE_ABGR);
-		for(int x = 0; x < 768; x++){
+		BufferedImage image = new BufferedImage(896*8, 512*8, BufferedImage.TYPE_4BYTE_ABGR);
+		for(int x = 0; x < 896; x++){
 			System.out.print(x + " ");
 			for(int y = 0; y < 512; y++){
 				if( y % 16 == 0) System.out.print(".");

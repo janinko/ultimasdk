@@ -26,7 +26,7 @@ public class Arts {
 	}
 
 	public Art getMap(int index) throws IOException{
-		return getArt((index) & 0xFFFF);
+		return getArt(index & 0xFFFF);
 	}
 
 	public Art getStatic(int index) throws IOException{

@@ -12,7 +12,7 @@ public class Map {
 	private FileIndex fileIndex;
 
 	public Map(File map) throws IOException{
-		fileIndex = new FileIndex(3*64+4, map, 0x60000);
+		fileIndex = new FileIndex(3*64+4, map, 0x70000);
 	}
 
 	public MapTile getTile(int x, int y) throws IOException{
