@@ -13,7 +13,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,11 +50,11 @@ public class StaticDrawer {
 	}
 	
 	private int getRelGX(int x, int y){
-		return (y - cy) * 22 - (x - cx) * 22 + ccx;
+		return (x - cx) * TILE_HALFSIZE - (y - cy) * TILE_HALFSIZE + ccx;
 	}
 
 	private int getRelGY(int x, int y){
-		return (y - cy) * 22 + (x - cx) * 22 + ccy;
+		return (x - cx) * TILE_HALFSIZE + (y - cy) * TILE_HALFSIZE + ccy;
 	}
 
 	private int getArtRelGX(Art art){
@@ -73,8 +72,11 @@ public class StaticDrawer {
 	}
 
 	public void putArt(Art art, int x, int y, int z){
+		//System.out.println("Drawing pos " + x + "," + y );
+		//System.out.println("  getRelGX: " + getRelGX(x,y) + " getRelGY: " + getRelGY(x,y) );
 		int gx = width / 2 + getRelGX(x, y) + getArtRelGX(art);
 		int gy = height / 2 + getRelGY(x, y) + getArtRelGY(art) + z*VERTICAL_SHIFT;
+		//System.out.println("  on " + gx + "," + gy);
 		canvas.drawImage(art.getImage(), gx, gy, null);
 	}
 
@@ -175,27 +177,46 @@ public class StaticDrawer {
 		long platesOnHeight =Math.round(Math.ceil((mapHeight*8 * TILE_SIZE) / (double) plateSize));
 		double tilesOnPlate = plateSize / 44.0;
 		int renderSize = (int) (Math.round(Math.ceil(tilesOnPlate)) + 15);
-		
+
 		for(int px = 0; px < plates; px++){
 			for(int py = 0; py < plates; py++){
+				System.out.print("Rendering plate " + px + "," + py +". ");
 				int dx = plateSize * px + plateSize / 2;							// pixelový střed plate
 				int dy = plateSize * py + plateSize / 2;
+				System.out.println("Pixel center is " + dx + "," + dy +". ");
 				int cx = ((dx + dy)/22 - zeroX)/2;									// souřadnice ve středu
 				int cy = (((dx + dy)/22 - dx / 11) - zeroY)/2;
+				System.out.println("  Central position is " + cx + "," + cy + ".");
 				int ddx = mapA - (cy * TILE_HALFSIZE - cx * TILE_HALFSIZE);	// pixelový střed souřadnic
 				int ddy = cy * TILE_HALFSIZE + cx * TILE_HALFSIZE;
-				int ccx = dx - ddx;
-				int ccy = dy - ddy;
-				if(ccx / TILE_SIZE > 0){
-					cx -= ccx / TILE_SIZE;
-					ccx = ccx % TILE_SIZE;
+				System.out.println("  Central position center is " + ddx + "," + ddy + ".");
+				int ccx = ddx - dx;
+				int ccy = ddy - dy;
+				System.out.println("  Difference is " + ccx + "," + ccy + ".");
+				while(ccx > 0){
+					cx -= 1;
+					cy += 1;
+					ccx -= 44;
 				}
-				if(ccy / TILE_SIZE > 0){
-					cy -= ccy / TILE_SIZE;
-					ccy = ccy % TILE_SIZE;
+				while(ccy > 0){
+					cx -= 1;
+					cy -= 1;
+					ccy -= 44;
 				}
-
-				System.out.println("Rendering plate " + px + "," + py +". Central position is " + cx + "," + cy + " with move: " + ccx + "," + ccy + ".");
+				while(ccx <= -44){
+					cx += 1;
+					cy -= 1;
+					ccx += 44;
+				}
+				while(ccy <= -44){
+					cx += 1;
+					cy += 1;
+					ccy += 44;
+				}
+				ddx = mapA - (cy * TILE_HALFSIZE - cx * TILE_HALFSIZE);	// pixelový střed souřadnic
+				ddy = cy * TILE_HALFSIZE + cx * TILE_HALFSIZE;
+				System.out.println("  New central position center is " + ddx + "," + ddy + ".");
+				System.out.println("  Resulting position move is " + ccx + "," + ccy + ".");
 				int startX = cx - renderSize;
 				if(startX < 0) startX = 0;
 				int startY = cy - renderSize;
@@ -206,13 +227,13 @@ public class StaticDrawer {
 				if(stopY >= mapHeight*8) stopY = mapHeight*8;
 				if(stopX < 0 || stopY < 0) continue;
 				if(startX >= 8*mapWidth || startY >= 8*mapHeight) continue;
-				System.out.println("  Starting rendering on " + startX + "," + startY + ", ending on " + stopX + "," + stopY + ".");
+				System.out.println("    Starting rendering on " + startX + "," + startY + ", ending on " + stopX + "," + stopY + ".");
 
 				StaticDrawer sd = new StaticDrawer(plateSize, plateSize, cx, cy, ccx, ccy);
 				List<Static> sts = new ArrayList<Static>();
 				for(int rx = startX; rx < stopX; rx++){
 					for(int ry = startY; ry < stopY; ry++){
-						 sts.addAll(statics.getStatics(rx, ry));
+						sts.addAll(statics.getStatics(rx, ry));
 					}
 				}
 				Collections.sort(sts, new StaticPositionComparator(tiledata));
@@ -224,7 +245,7 @@ public class StaticDrawer {
 						System.out.println(i + ": id: " + s.getId() + " name: " + t.getName() + " pos: " + s.getX() + "," + s.getY() + "," + s.getZ());
 						continue;
 					}
-					sd.putArt(a, s.getY(), s.getX(), s.getZ());
+					sd.putArt(a, s.getX(), s.getY(), s.getZ());
 				}
 				File out = new File("/tmp/map/map_" + px + "_" + py + ".png");
 				ImageIO.write(sd.getImage(), "png", out);
