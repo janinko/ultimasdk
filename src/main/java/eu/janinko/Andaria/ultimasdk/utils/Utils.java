@@ -22,6 +22,12 @@ public class Utils {
 	}
 
 	public static void writeName(OutputStream out, String name) throws IOException {
-		out.write(name.getBytes(chs), 0, 20);
+		byte[] stringBuffer = new byte[20];
+		int i=0;
+		for(byte b : name.getBytes(chs)){
+			if(i>=20) break;
+			stringBuffer[i++]=b;
+		}
+		out.write(stringBuffer, 0, 20);
 	}
 }
