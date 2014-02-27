@@ -2,8 +2,10 @@ package eu.janinko.Andaria.ultimasdk.files;
 
 import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
 import eu.janinko.Andaria.ultimasdk.files.hues.Hue;
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +29,18 @@ public class Hues {
 			Hue hue = new Hue(in);
 			hue.setId(i);
 			hues.add(hue);
+		}
+	}
+
+	public void save(OutputStream os) throws IOException{
+		LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(os);
+
+		for(int i=0; i<3000; i++){
+			if((i & 0x07) == 0){ // 0x0f = 7 = 0000 0111
+				out.writeInt(hueHeaders.get(i >> 3));
+			}
+
+			hues.get(i).save(out);
 		}
 	}
 

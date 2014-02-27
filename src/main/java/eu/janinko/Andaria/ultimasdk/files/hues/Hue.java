@@ -3,6 +3,7 @@ package eu.janinko.Andaria.ultimasdk.files.hues;
 import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
 import eu.janinko.Andaria.ultimasdk.utils.Utils;
 import eu.janinko.Andaria.ultimasdk.files.graphics.Color;
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataOutputStream;
 import java.io.IOException;
 
 /**
@@ -24,6 +25,15 @@ public final class Hue {
 		tableStart = in.readShort();
 		tableEnd = in.readShort();
 		this.setName(Utils.readName(in));
+	}
+
+	public void save(LittleEndianDataOutputStream out) throws IOException {
+		for(int i=0; i<32; i++){
+			out.writeShort(colors[i].getColor());
+		}
+		out.writeShort(tableStart);
+		out.writeShort(tableEnd);
+		Utils.writeName(out, name);
 	}
 
 	public int getId() {
