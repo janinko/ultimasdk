@@ -9,8 +9,8 @@ import java.io.IOException;
  * @author janinko
  */
 public class Bitmap {
-	private int width;
-	private int height;
+	private final int width;
+	private final int height;
 	private Color[][] bitmap;
 	private Color[][] unhued;
 
@@ -24,8 +24,8 @@ public class Bitmap {
 	}
 	
 	public Bitmap(int width, int height){
-		if(width < 0) throw new IllegalArgumentException("Width can't be less then zero, is " + width);
-		if(height < 0) throw new IllegalArgumentException("Height can't be less then zero, is " + height);
+		if(width <= 0) throw new IllegalArgumentException("Width can't be less then zero, is " + width);
+		if(height <= 0) throw new IllegalArgumentException("Height can't be less then zero, is " + height);
 		
 		this.bitmap = new Color[width][height];
 		this.width = width;
@@ -116,11 +116,12 @@ public class Bitmap {
 			for(int y=0; y<height; y++){
 				Color color = unhued[x][y];
 				if(color.isAlpha()) continue;
+				if(color.get5Red() == 0 && color.get5Green() == 0 && color.get5Blue() <= 1) continue;
 				
 				if(partial && color.isGrayscale()){
-					bitmap[x][y] = hue.getColor(color.get5Average());
+					bitmap[x][y] = hue.getColor(color.get5Red());
 				}else if(!partial){
-					bitmap[x][y] = hue.getColor(color.get5Average());
+					bitmap[x][y] = hue.getColor(color.get5Red());
 				}
 			}
 		}
@@ -128,6 +129,21 @@ public class Bitmap {
 
 	public Point getPoint(int x, int y){
 		return new Point(x,y);
+	}
+
+	public void setColor(int x, int y, Color color){
+		bitmap[y][x] = color;
+		if(unhued != null){
+			unhued[y][x] = color;
+		}
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public int getWidth() {
+		return width;
 	}
 
 	public class Point{
