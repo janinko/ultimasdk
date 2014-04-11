@@ -56,6 +56,16 @@ class FileIndex {
 		return new DataPack(data, entry.extra);
 	}
 
+	@Override
+	public String toString() {
+		int i = 0;
+		StringBuilder sb = new StringBuilder();
+		for(Entry3D e : index){
+			sb.append(i++).append(": ").append(e).append('\n');
+		}
+		return sb.toString();
+	}
+
 	public static class DataPack{
 		private byte[] data;
 		private int extra;
@@ -87,6 +97,11 @@ class FileIndex {
 			this.offset = offset;
 			this.length = length;
 			this.extra = extra;
+		}
+
+		@Override
+		public String toString() {
+			return "Entry3D{" + "offset=" + offset + ", length=" + length + ", extra=" + extra + '}';
 		}
 	}
 

@@ -32,4 +32,9 @@ public class Arts {
 	public Art getStatic(int index) throws IOException{
 		return getArt((index + 0x4000) & 0xFFFF);
 	}
+
+	@Override
+	public String toString() {
+		return fileIndex.toString();
+	}
 }

@@ -27,4 +27,9 @@ public class Gumps {
 
 		return gump;
 	}
+
+	@Override
+	public String toString() {
+		return fileIndex.toString();
+	}
 }

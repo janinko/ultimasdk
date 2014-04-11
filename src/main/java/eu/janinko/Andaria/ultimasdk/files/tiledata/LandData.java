@@ -60,6 +60,6 @@ public final class LandData {
 
 	@Override
 	public String toString() {
-		return "LandData{" + "name=" + name + ", flags=" + flags + '}';
+		return "LandData{" + "id=" + id + ", flags=" + flags + ", textureId=" + textureId + ", name=" + name + '}';
 	}
 }

@@ -171,6 +171,6 @@ public final class ItemData {
 
 	@Override
 	public String toString() {
-		return "ItemData{" + "name=" + name + ", flags=" + flags + ", weight=" + weight + ", quality=" + quality + ", quantity=" + quantity + ", value=" + value + ", height=" + height + ", anitmation=" + animation + '}';
+		return "ItemData{" + "id=" + id + ", flags=" + flags + ", weight=" + weight + ", quality=" + quality + ", unknown1=" + unknown1 + ", unknown2=" + unknown2 + ", quantity=" + quantity + ", animation=" + animation + ", unknown3=" + unknown3 + ", hue=" + hue + ", unknown4=" + unknown4 + ", value=" + value + ", height=" + height + ", name=" + name + '}';
 	}
 }
