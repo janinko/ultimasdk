@@ -41,6 +41,22 @@ public final class ItemData {
 		this.setName(Utils.readName(in));
 	}
 
+	public ItemData(ItemData d) {
+		this.setFlags(new TileFlags(d.flags.toInt()));
+		this.setWeight(d.weight);
+		this.setQuality(d.quality);
+		this.setUnknown1(d.unknown1);
+		this.setUnknown2(d.unknown2);
+		this.setQuantity(d.quantity);
+		this.setAnimation(d.animation);
+		this.setUnknown3(d.unknown3);
+		this.setHue(d.hue);
+		this.setUnknown4(d.unknown4);
+		this.setValue(d.value); // Unknown5
+		this.setHeight(d.height);
+		this.setName(d.name);
+	}
+
 	public void save(LittleEndianDataOutputStream out) throws IOException{
 		out.writeInt(this.getFlags().toInt());
 		out.writeByte(this.getWeight());

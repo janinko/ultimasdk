@@ -45,4 +45,12 @@ public class TileFlags {
 	public boolean contains(TileFlag flag){
 		return flags.contains(flag);
 	}
+
+	public void setFlag(TileFlag flag, boolean set){
+		if(set){
+			flags.add(flag);
+		}else{
+			flags.remove(flag);
+		}
+	}
 }
