@@ -71,11 +71,21 @@ public class TileData {
 		return itemData.get(i);
 	}
 
+	public LandData getLand(int i){
+		return landData.get(i);
+	}
+
 	public List<ItemData> getItems(){
 		return Collections.unmodifiableList(itemData);
 	}
 
+	public List<LandData> getLands(){
+		return Collections.unmodifiableList(landData);
+	}
 
+	public void setItem(int i, ItemData item) {
+		itemData.set(i, item);
+	}
 
 	@Override
 	public String toString() {
