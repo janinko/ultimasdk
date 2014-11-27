@@ -1,11 +1,13 @@
 package eu.janinko.Andaria.ultimasdk.files;
 
 import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataOutputStream;
 import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
@@ -13,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author Honza Brázdil <jbrazdil@redhat.com>
  */
-class FileIndex {
+public class FileIndex {
 	private ArrayList<Entry3D> index;
 
 	private RandomAccessFile mulData;
@@ -64,6 +66,60 @@ class FileIndex {
 			sb.append(i++).append(": ").append(e).append('\n');
 		}
 		return sb.toString();
+	}
+
+	public void save(OutputStream idxStream, OutputStream mulFile) throws IOException {
+		LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(idxStream);
+		int offset = 0;
+		for(int i=0; i<index.size(); i++){
+			offset += saveDatum(i, offset, out, mulFile);
+		}
+	}
+	
+	private int saveDatum(int i, int offset, LittleEndianDataOutputStream out, OutputStream mulFile) throws IOException {
+		Entry3D entry = index.get(i);
+		if (entry.length == 0 || entry.length == -1) {
+				if(-1 != entry.offset){
+					System.out.println(offset + " : " + entry.offset);
+				}
+			out.writeInt(-1);
+		} else {
+				if(offset != entry.offset){
+					System.out.println(offset + " : " + entry.offset);
+				}
+			out.writeInt(offset);
+		}
+		out.writeInt(entry.length);
+		out.writeInt(entry.extra);
+		DataPack data = getData(i);
+		if (data == null) {
+			return 0;
+		}
+		mulFile.write(data.data);
+		return data.data.length;
+	}
+
+	public void save(OutputStream idxStream, OutputStream mulFile, int id, DataPack data) throws IOException {
+		LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(idxStream);
+		int offset = 0;
+		for(int i=0; i<index.size(); i++){
+			if(i == id){
+				if(data.data.length == 0){
+					out.writeInt(-1);
+					out.writeInt(0);
+					out.writeInt(0);
+				}else{
+					out.writeInt(offset);
+					out.writeInt(data.data.length);
+					out.writeInt(data.extra);
+					mulFile.write(data.data);
+					offset += data.data.length;
+				}
+			}else{
+				offset += saveDatum(i, offset, out, mulFile);
+			}
+		}
+		
 	}
 
 	public static class DataPack{

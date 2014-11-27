@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import eu.janinko.Andaria.ultimasdk.files.FileIndex.DataPack;
 import eu.janinko.Andaria.ultimasdk.files.gumps.Gump;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  *
@@ -12,9 +14,15 @@ import java.io.InputStream;
  */
 public class Gumps {
 	FileIndex fileIndex;
+	File gumpmul;
 
 	public Gumps(InputStream gumpidx, File gumpmul) throws IOException{
 		fileIndex = new FileIndex(gumpidx, gumpmul, 0x10000);
+		this.gumpmul = gumpmul;
+	}
+	
+	public void save(OutputStream gumpidx, OutputStream gumpmul) throws IOException{
+		fileIndex.save(gumpidx, gumpmul);
 	}
 
 	public Gump getGump(int index) throws IOException{
@@ -31,5 +39,14 @@ public class Gumps {
 	@Override
 	public String toString() {
 		return fileIndex.toString();
+	}
+
+	public void setGump(int i, Gump gump, OutputStream gumpidx) throws IOException {
+		File f = new File(gumpmul.getAbsolutePath() + ".new");
+		byte[] data = gump.getBitmap().writeColorLines();
+		int extra = (gump.getHeight() & 0xFFFF) | ((gump.getWidth() & 0xFFFF) << 16);
+		DataPack dp = new DataPack(data, extra);
+		fileIndex.save(gumpidx, new FileOutputStream(f) , i, dp);
+		System.out.println("Renaming: " + f.renameTo(gumpmul));
 	}
 }
