@@ -21,6 +21,12 @@ public class Gump extends Image{
 		bitmap.readColorLines(data);
 	}
 
+	public Gump(Bitmap b) {
+		this.width = b.getWidth();
+		this.height = b.getHeight();
+		this.bitmap = b;
+	}
+
 	public int getWidth() {
 		return width;
 	}
