@@ -45,10 +45,14 @@ public class Hues {
 	}
 
 	public Hue getHue(int i){
-		return hues.get(i);
+		return hues.get(i-1);
 	}
 
 	public List<Hue> getHues(){
 		return Collections.unmodifiableList(hues);
+	}
+
+	public void setHue(int i, Hue hue) {
+		hues.set(i-1, hue);
 	}
 }
