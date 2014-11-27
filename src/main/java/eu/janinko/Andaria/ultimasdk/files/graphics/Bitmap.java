@@ -1,7 +1,8 @@
 package eu.janinko.Andaria.ultimasdk.files.graphics;
 
-import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataInputStream;
 import eu.janinko.Andaria.ultimasdk.files.hues.Hue;
+import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataInputStream;
+import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -56,6 +57,67 @@ public class Bitmap {
 				}
 			}
 		}
+	}
+	
+	public void readAnimFrame(RandomAccessLEDataInputStream data, int cx, int cy, Color[] palette) throws IOException {
+		int ln = 0;
+		int xBase = cx - 512;
+		int yBase = cy + height - 512;
+		int delta = width;
+		ln += xBase;
+		ln += yBase * delta;
+		while(true){ // not konec
+			int rowHeader = data.readInt();
+			
+			if(rowHeader == 0x7fff7fff ) break;  // end
+			
+			int runLength = rowHeader & 0xfff;
+			int lineNum = ((rowHeader >> 12) & 0x3ff) ^ 0x200;
+			int rowOfs = ((rowHeader >> 22) & 0x3ff) ^ 0x200;
+			int pos = lineNum * delta + rowOfs + ln;
+			int x = pos % delta;
+			int y = pos / delta;
+			if( y >= 0){
+				if(y >= height) break;
+				for(int i = 0; i < runLength; i++){
+					int p = data.readUnsignedByte();
+					bitmap[x+i][y] = palette[p];
+				}
+			}else{
+				data.seek(data.getPosition() + runLength);
+			}
+		}
+	}
+	
+	public byte[] writeColorLines() throws IOException{
+		RandomAccessLEDataOutputStream data = new RandomAccessLEDataOutputStream();
+		
+		int start = 4*height;
+		for(int y=0; y<height; y++){
+			data.seek(y*4);
+			data.writeInt(start / 4);
+			data.seek(start);
+			Color previous = null;
+			int repeat = 1;
+			for(int x = 0; x < width; x++){
+				Color act = bitmap[x][y];
+				if(!act.equals(previous)){
+					if(previous != null){
+						data.writeShort(repeat);
+						start += 2;
+					}
+					previous = act;
+					data.writeShort(act.getColor());
+					start += 2;
+					repeat = 1;
+				}else{
+					repeat++;
+				}
+			}
+			data.writeShort(repeat);
+			start += 2;
+		}
+		return data.getArray();
 	}
 
 	public void readColorChunks(RandomAccessLEDataInputStream data) throws IOException{
