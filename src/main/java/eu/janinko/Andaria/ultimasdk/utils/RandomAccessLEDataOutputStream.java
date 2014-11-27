@@ -1,52 +1,51 @@
 
 package eu.janinko.Andaria.ultimasdk.utils;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
  * @author janinko
  */
-public class RandomAccessLEDataInputStream extends LittleEndianDataInputStream{
+public class RandomAccessLEDataOutputStream extends LittleEndianDataOutputStream{
 
-	public RandomAccessLEDataInputStream(byte[] data) {
-		super(new RandomAccessInputStream(data));
+	public RandomAccessLEDataOutputStream() {
+		super(new RandomAccessOutputStream());
 	}
 
 	public void seek(int pos){
-		if(pos < 0 || pos >= ((RandomAccessInputStream) this.in).data.length)
+		if(pos < 0)
 			throw new ArrayIndexOutOfBoundsException();
-		((RandomAccessInputStream) this.in).pos = pos;
+		((RandomAccessOutputStream) this.out).pos = pos;
 	}
 
 	public int getPosition(){
-		return ((RandomAccessInputStream) this.in).pos;
+		return ((RandomAccessOutputStream) this.out).pos;
 	}
 
-	private static class RandomAccessInputStream extends InputStream{
+	public byte[] getArray() {
+		ArrayList<Byte> data = ((RandomAccessOutputStream) this.out).data;
+		byte[] out = new byte[data.size()];
+		for(int i=0; i< data.size(); i++){
+			out[i] = data.get(i);
+		}
+		return out;
+	}
+
+	private static class RandomAccessOutputStream extends OutputStream{
 		private int pos = 0;
-		private byte[] data;
-
-		public RandomAccessInputStream(byte[] data) {
-			this.data = data;
-		}
+		private ArrayList<Byte> data = new ArrayList<Byte>();
 
 		@Override
-		public int read(){
-			if(pos >= data.length) return -1;
-			return data[pos++] & 0xff;
-		}
-
-		@Override
-		public int read(byte[] b, int off, int len){
-			if(pos >= data.length) return -1;
-			if(pos + len > data.length){
-				len = data.length - pos;
+		public void write(int b) throws IOException {
+			if(pos >= data.size()){
+				data.ensureCapacity(pos+1);
+				while(pos >= data.size()){
+					data.add((byte) 0);
+				}
 			}
-			for(int end = off + len; off < end; off++){
-				b[off] = data[pos++];
-			}
-			return len;
+			data.set(pos++, (byte) (b & 0xff));
 		}
-
 	}
 }
