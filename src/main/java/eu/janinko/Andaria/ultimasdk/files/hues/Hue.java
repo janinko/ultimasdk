@@ -17,6 +17,13 @@ public final class Hue {
 	private short tableEnd;
 	private String name;
 
+	public Hue(Hue o) {
+		this.id = o.id;
+		this.colors = o.colors.clone();
+		this.tableStart = o.tableStart;
+		this.tableEnd = o.tableEnd;
+		this.name = o.name;
+	}
 
 	public Hue(LittleEndianDataInputStream in) throws IOException {
 		for(int i=0; i<32; i++){
