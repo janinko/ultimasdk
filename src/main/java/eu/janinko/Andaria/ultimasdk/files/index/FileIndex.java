@@ -1,8 +1,9 @@
-package eu.janinko.Andaria.ultimasdk.files;
+package eu.janinko.Andaria.ultimasdk.files.index;
 
 import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
 import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataOutputStream;
 import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataInputStream;
+
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
@@ -16,12 +17,12 @@ import java.util.ArrayList;
  * @author Honza Brázdil <jbrazdil@redhat.com>
  */
 public class FileIndex {
-	private ArrayList<Entry3D> index;
+	protected ArrayList<Entry3D> index;
 
 	private RandomAccessFile mulData;
 
 	public FileIndex(InputStream idxStream, File mulFile, int length) throws IOException{
-		index = new ArrayList<Entry3D>(length);
+		index = new ArrayList<>(length);
 
 		LittleEndianDataInputStream idxData = new LittleEndianDataInputStream(idxStream);
 		mulData= new RandomAccessFile(mulFile,"r");
@@ -40,7 +41,7 @@ public class FileIndex {
 	}
 
 	public FileIndex(int blockSize, File mulFile, int length) throws IOException{
-		index = new ArrayList<Entry3D>(length);
+		index = new ArrayList<>(length);
 
 		mulData= new RandomAccessFile(mulFile,"r");
 
@@ -48,10 +49,15 @@ public class FileIndex {
 			index.add(new Entry3D(i*blockSize, blockSize, 0));
 		}
 	}
+    
+    public boolean isData(int i){
+        return index.get(i).length > 0;
+    }
 
 	public DataPack getData(int i) throws IOException{
 		Entry3D entry = index.get(i);
 		if(entry.length <= 0) return null;
+        //System.out.println(i+": l=" + entry.length+ " o="+ entry.offset + " e=" + entry.extra);
 		byte[] data = new byte[entry.length];
 		mulData.seek(entry.offset);
 		mulData.readFully(data);
@@ -75,17 +81,21 @@ public class FileIndex {
 			offset += saveDatum(i, offset, out, mulFile);
 		}
 	}
+    
+    public int size(){
+        return index.size();
+    }
 	
-	private int saveDatum(int i, int offset, LittleEndianDataOutputStream out, OutputStream mulFile) throws IOException {
+	protected int saveDatum(int i, int offset, LittleEndianDataOutputStream out, OutputStream mulFile) throws IOException {
 		Entry3D entry = index.get(i);
 		if (entry.length == 0 || entry.length == -1) {
 				if(-1 != entry.offset){
-					System.out.println(offset + " : " + entry.offset);
+					//System.out.println(offset + " : " + entry.offset);
 				}
 			out.writeInt(-1);
 		} else {
 				if(offset != entry.offset){
-					System.out.println(offset + " : " + entry.offset);
+					//System.out.println(offset + " : " + entry.offset);
 				}
 			out.writeInt(offset);
 		}
@@ -99,32 +109,9 @@ public class FileIndex {
 		return data.data.length;
 	}
 
-	public void save(OutputStream idxStream, OutputStream mulFile, int id, DataPack data) throws IOException {
-		LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(idxStream);
-		int offset = 0;
-		for(int i=0; i<index.size(); i++){
-			if(i == id){
-				if(data.data.length == 0){
-					out.writeInt(-1);
-					out.writeInt(0);
-					out.writeInt(0);
-				}else{
-					out.writeInt(offset);
-					out.writeInt(data.data.length);
-					out.writeInt(data.extra);
-					mulFile.write(data.data);
-					offset += data.data.length;
-				}
-			}else{
-				offset += saveDatum(i, offset, out, mulFile);
-			}
-		}
-		
-	}
-
 	public static class DataPack{
-		private byte[] data;
-		private int extra;
+		private final byte[] data;
+		private final int extra;
 
 		public DataPack(byte[] data, int extra) {
 			this.data = data;
@@ -145,9 +132,9 @@ public class FileIndex {
 	}
 
 	private static class Entry3D{
-		private int offset;
-		private int length;
-		private int extra;
+		private final int offset;
+		private final int length;
+		private final int extra;
 
 		public Entry3D(int offset, int length, int extra) {
 			this.offset = offset;

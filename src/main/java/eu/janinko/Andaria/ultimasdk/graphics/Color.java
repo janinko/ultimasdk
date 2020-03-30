@@ -1,13 +1,15 @@
 
-package eu.janinko.Andaria.ultimasdk.files.graphics;
+package eu.janinko.Andaria.ultimasdk.graphics;
 
 /**
  * @author janinko
  */
 public class Color{
+
 	private final short color;
 	public static final Color ALPHA = new Color((short) 0x0000);
 	public static final Color BLACK = new Color((short) 0x8000);
+	public static final Color WHITE = new Color((short) 0x7FFF);
 
 	private Color(short color) {
 		this.color = color;
@@ -25,6 +27,17 @@ public class Color{
 		short color = (short) (blue | (green << 5) | (red << 10));
 		return getInstance(color);
 	}
+    static Color from8bit(int red, int green, int blue, int alfa) {
+        if(alfa == 0) return Color.ALPHA;
+		if(blue < 0 || blue > 255) throw new IllegalArgumentException("Color can be only in range 0 - 255. Blue: " + blue);
+		if(green < 0 || green > 255) throw new IllegalArgumentException("Color can be only in range 0 - 255. Green: " + green);
+		if(red < 0 || red > 255) throw new IllegalArgumentException("Color can be only in range 0 - 255. Red: " + red);
+        return getInstance(convertColor8to5(red), convertColor8to5(green), convertColor8to5(blue));
+    }
+
+    static Color from8bit(int red, int green, int blue) {
+        return from8bit(red, green, blue, 255);
+    }
 
 	public short getColor() {
 		return color;
@@ -116,9 +129,25 @@ public class Color{
 		}
 	}
 
-	public static int convertColor8to5(int c){
-		return c / 8;
+	public static short convertColor8to5(int c){
+		return (short) (c / 8);
 	}
+    
+    public double distance(Color other) {
+        int rmean = ( this.getRed()+  other.getRed()) / 2;
+        int r = this.getRed() - other.getRed();
+        int g = this.getGreen() - other.getGreen();
+        int b = this.getBlue() - other.getBlue();
+        final int rpart = ((512 + rmean) * r * r) >> 8;
+        final int gpart = 4 * g * g;
+        final int bpart = ((767 - rmean) * b * b) >> 8;
+        return Math.sqrt(rpart + gpart + bpart);
+    }
+
+    @Override
+    public String toString() {
+        return "Color{" + "r=" + get5Red() + " g=" + get5Green()+ " b=" + get5Blue()+ " a=" + isAlpha() + '}';
+    }
 
 	@Override
 	public int hashCode() {

@@ -11,7 +11,7 @@ public class Static {
 	private int x;
 	private int y;
 	private byte z;
-	private short unknown;
+	private int color;
 
 	private int xBlock;
 	private int yBlock;
@@ -24,7 +24,7 @@ public class Static {
 		x = data.readUnsignedByte();
 		y = data.readUnsignedByte();
 		z = data.readByte();
-		unknown = data.readShort();
+		color = data.readUnsignedShort();
 	}
 
 	public int getX(){
@@ -42,9 +42,29 @@ public class Static {
 	public int getId(){
 		return id;
 	}
+    
+    public int getColor(){
+        return color;
+    }
 
 	@Override
 	public String toString() {
-		return "Static{" + "id=" + id + ", x=" + getX() + ", y=" + getY() + ", z=" + z + ", unknown=" + unknown + '}';
+		return "Static{" + "id=" + id + ", x=" + getX() + ", y=" + getY() + ", z=" + z + ", color=" + color + '}';
 	}
+
+    public boolean equalsStatic(Static other) {
+        if (this.x != other.x) {
+            return false;
+        }
+        if (this.y != other.y) {
+            return false;
+        }
+        if (this.z != other.z) {
+            return false;
+        }
+        if (this.color != other.color) {
+            return false;
+        }
+        return true;
+    }
 }

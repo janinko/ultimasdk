@@ -2,8 +2,9 @@ package eu.janinko.Andaria.ultimasdk.files.hues;
 
 import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
 import eu.janinko.Andaria.ultimasdk.utils.Utils;
-import eu.janinko.Andaria.ultimasdk.files.graphics.Color;
+import eu.janinko.Andaria.ultimasdk.graphics.Color;
 import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataOutputStream;
+
 import java.io.IOException;
 
 /**
@@ -70,6 +71,19 @@ public final class Hue {
 	public void setName(String name) {
 		this.name = name;
 	}
+    
+    public float[] averageHsb(){
+        float r = 0;
+        float g = 0;
+        float b = 0;
+        for(Color color : colors){
+            r += color.get5Red();
+            g += color.get5Green();
+            b += color.get5Blue();
+        }
+        float[] hsb = java.awt.Color.RGBtoHSB((int)(r /32/31*255), (int)(g /32/31*255), (int)(b /32/31*255), null);
+        return hsb;
+    }
 
 	@Override
 	public String toString() {
@@ -86,11 +100,11 @@ public final class Hue {
 				sb.append(' ');
 			}
 			sb.append(' ');
-			sb.append(colors[i].getRed()); // red
+			sb.append(colors[i].get5Red()); // red
 			sb.append(' ');
-			sb.append(colors[i].getGreen()); // green
+			sb.append(colors[i].get5Green()); // green
 			sb.append(' ');
-			sb.append(colors[i].getBlue()); // blue
+			sb.append(colors[i].get5Blue()); // blue
 			sb.append("] ");
 		}
 		return sb.toString();

@@ -7,14 +7,14 @@ import java.io.IOException;
 /**
  * @author janinko
  */
-public final class Verdato {
+public final class Verdatum {
 	VerdataType type;
 	int block;
 	int position;
 	int size;
 	int various;
 
-	public Verdato(LittleEndianDataInputStream in) throws IOException {
+	public Verdatum(LittleEndianDataInputStream in) throws IOException {
 		this.setType(VerdataType.get(in.readInt()));
 		this.setBlock(in.readInt());
 		this.setPosition(in.readInt());

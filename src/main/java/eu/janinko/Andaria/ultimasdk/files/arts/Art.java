@@ -1,10 +1,17 @@
 package eu.janinko.Andaria.ultimasdk.files.arts;
 
+import java.awt.image.BufferedImage;
+
 import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataInputStream;
-import eu.janinko.Andaria.ultimasdk.files.graphics.Bitmap;
-import eu.janinko.Andaria.ultimasdk.files.graphics.Color;
-import eu.janinko.Andaria.ultimasdk.files.graphics.Image;
+import eu.janinko.Andaria.ultimasdk.graphics.Bitmap;
+import eu.janinko.Andaria.ultimasdk.graphics.Image;
+
 import java.io.IOException;
+import java.util.Objects;
+
+import eu.janinko.Andaria.ultimasdk.graphics.BasicBitmap;
+import eu.janinko.Andaria.ultimasdk.graphics.BitmapWriter;
+import eu.janinko.Andaria.ultimasdk.utils.RandomAccessLEDataOutputStream;
 
 /**
  * @author janinko
@@ -22,34 +29,33 @@ public class Art extends Image{
 			loadRun(data);
 		}
 	}
+    
+	public Art(BufferedImage image) {
+		flag = 1234;
+        bitmap = new Bitmap(image);
+        width = image.getWidth();
+        height = image.getHeight();
+	}
 
 	private void loadRaw(RandomAccessLEDataInputStream data) throws IOException {
 		width = 44;
 		height = 44;
-		bitmap = new Bitmap(width, height);
-
-		for(int x=0; x<width; x++) for(int y=0; y<height; y++){
-			bitmap.getPoint(x, y).setColor(Color.ALPHA);
-		}
-		for(int x=0; x < 22; x++){
-			for(int y=21-x; y <= 22+x; y++){
-				bitmap.getPoint(x, y).setColor(data.readShort());
-			}
-		}
-		for(int x=22; x < 44; x++){
-			for(int y=x-22; y <= 65-x; y++){
-				bitmap.getPoint(x, y).setColor(data.readShort());
-			}
-		}
+		bitmap = BasicBitmap.readRaw(data);
 	}
 
 	private void loadRun(RandomAccessLEDataInputStream data) throws IOException {
 		width = data.readUnsignedShort();
 		height = data.readUnsignedShort();
-		bitmap = new Bitmap(width, height);
-		bitmap.readColorChunks(data);
+		bitmap = BasicBitmap.readColorChunks(width, height, data);
 	}
 
+    public void save(RandomAccessLEDataOutputStream data) throws IOException{
+        data.writeInt(flag);
+        data.writeShort(width);
+        data.writeShort(height);
+        data.write(BitmapWriter.writeColorChunks(bitmap));
+    }
+    
 	public int getWidth() {
 		return width;
 	}
@@ -57,4 +63,48 @@ public class Art extends Image{
 	public int getHeight() {
 		return height;
 	}
+    
+    public int getFlag() {
+        return flag;
+    }
+
+    @Override
+    public String toString() {
+        return "Art{" + "flag=" + flag + ", width=" + width + ", height=" + height + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 43 * hash + this.flag;
+        hash = 43 * hash + this.width;
+        hash = 43 * hash + this.height;
+        hash = 43 * hash + Objects.hashCode(this.bitmap);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Art other = (Art) obj;
+        if (this.flag != other.flag) {
+            return false;
+        }
+        if (this.width != other.width) {
+            return false;
+        }
+        if (this.height != other.height) {
+            return false;
+        }
+        if (!Objects.equals(this.bitmap, other.bitmap)) {
+            return false;
+        }
+        return true;
+    }
+
 }

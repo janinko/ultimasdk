@@ -1,31 +1,30 @@
 package eu.janinko.Andaria.ultimasdk.files;
 
+
 import java.io.File;
 import java.io.IOException;
-import eu.janinko.Andaria.ultimasdk.files.FileIndex.DataPack;
+
+import eu.janinko.Andaria.ultimasdk.files.index.FileIndex.DataPack;
 import eu.janinko.Andaria.ultimasdk.files.gumps.Gump;
-import java.io.FileOutputStream;
+
 import java.io.InputStream;
-import java.io.OutputStream;
+
+import eu.janinko.Andaria.ultimasdk.files.index.IdxFile;
+import eu.janinko.Andaria.ultimasdk.graphics.BitmapWriter;
 
 /**
  *
  * @author Honza Brázdil <jbrazdil@redhat.com>
  */
-public class Gumps {
-	FileIndex fileIndex;
-	File gumpmul;
+public class Gumps extends IdxFile<Gump> {
+    public static final int GUMPS_COUNT=0x10000;
 
 	public Gumps(InputStream gumpidx, File gumpmul) throws IOException{
-		fileIndex = new FileIndex(gumpidx, gumpmul, 0x10000);
-		this.gumpmul = gumpmul;
-	}
-	
-	public void save(OutputStream gumpidx, OutputStream gumpmul) throws IOException{
-		fileIndex.save(gumpidx, gumpmul);
+		super(gumpidx, gumpmul, GUMPS_COUNT);
 	}
 
-	public Gump getGump(int index) throws IOException{
+    @Override
+	public Gump get(int index) throws IOException{
 		DataPack data =  fileIndex.getData(index);
 		if(data == null) return null;
 		int width = (data.getExtra() >> 16) & 0xFFFF;
@@ -35,18 +34,15 @@ public class Gumps {
 
 		return gump;
 	}
+    
+    public boolean isGump(int index) {
+        return fileIndex.isData(index);
+    }
 
-	@Override
-	public String toString() {
-		return fileIndex.toString();
-	}
-
-	public void setGump(int i, Gump gump, OutputStream gumpidx) throws IOException {
-		File f = new File(gumpmul.getAbsolutePath() + ".new");
-		byte[] data = gump.getBitmap().writeColorLines();
+	public void setGump(int i, Gump gump) throws IOException {
+		byte[] data = BitmapWriter.writeColorLines(gump.getBitmap());
 		int extra = (gump.getHeight() & 0xFFFF) | ((gump.getWidth() & 0xFFFF) << 16);
 		DataPack dp = new DataPack(data, extra);
-		fileIndex.save(gumpidx, new FileOutputStream(f) , i, dp);
-		System.out.println("Renaming: " + f.renameTo(gumpmul));
+        fileIndex.set(i, dp);
 	}
 }

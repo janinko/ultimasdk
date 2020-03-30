@@ -1,7 +1,8 @@
 package eu.janinko.Andaria.ultimasdk.files;
 
 import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
-import eu.janinko.Andaria.ultimasdk.files.graphics.Color;
+import eu.janinko.Andaria.ultimasdk.graphics.Color;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -9,8 +10,8 @@ import java.util.ArrayList;
 /**
  * @author janinko
  */
-public class Radarcol {
-	private ArrayList<Color> colors = new ArrayList<Color>(0x10000);
+public class Radarcol implements UOFile<Color> {
+	private ArrayList<Color> colors = new ArrayList<>(0x10000);
 
 	public Radarcol(InputStream is) throws IOException {
 		LittleEndianDataInputStream in = new LittleEndianDataInputStream(is);
@@ -20,11 +21,21 @@ public class Radarcol {
 		}
 	}
 
+    @Override
+    public Color get(int idx) {
+		return colors.get(idx);
+    }
+
+    @Override
+    public int count() {
+        return colors.size();
+    }
+
 	public Color getMapColor(int index) {
-		return colors.get(index);
+		return get(index);
 	}
 
 	public Color getStaticColor(int index) {
-		return colors.get(index + 0x4000);
+		return get(index + 0x4000);
 	}
 }

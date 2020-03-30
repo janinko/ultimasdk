@@ -53,4 +53,26 @@ public class TileFlags {
 			flags.remove(flag);
 		}
 	}
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (this.flags != null ? this.flags.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TileFlags other = (TileFlags) obj;
+        if (this.flags != other.flags && (this.flags == null || !this.flags.equals(other.flags))) {
+            return false;
+        }
+        return true;
+    }
 }

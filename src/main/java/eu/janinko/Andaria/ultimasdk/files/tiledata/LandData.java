@@ -8,58 +8,71 @@ import java.io.IOException;
 /**
  * @author jbrazdil
  */
-public final class LandData {
-	private int id;
-	private TileFlags flags;
-	private short textureId;
-	private String name;
+public final class LandData extends TileDatum {
 
-	public LandData(LittleEndianDataInputStream in) throws IOException {
-		this.setFlags(new TileFlags(in.readInt()));
-		this.setTextureId(in.readShort());
-		this.setName(Utils.readName(in));
-	}
+    private short textureId;
 
-	public void save(LittleEndianDataOutputStream out) throws IOException{
-		out.writeInt(this.getFlags().toInt());
-		out.writeShort(this.getTextureId());
-		Utils.writeName(out,this.getName());
-	}
+    public LandData(LittleEndianDataInputStream in) throws IOException {
+        this.setFlags(new TileFlags(in.readInt()));
+        this.setTextureId(in.readShort());
+        this.setName(Utils.readName(in));
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void save(LittleEndianDataOutputStream out) throws IOException {
+        out.writeInt(this.getFlags().toInt());
+        out.writeShort(this.getTextureId());
+        Utils.writeName(out, this.getName());
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public short getTextureId() {
+        return textureId;
+    }
 
-	public TileFlags getFlags() {
-		return flags;
-	}
+    public void setTextureId(short textureId) {
+        this.textureId = textureId;
+    }
 
-	public void setFlags(TileFlags flags) {
-		this.flags = flags;
-	}
+    @Override
+    public String toString() {
+        if (isEmpty()) {
+            return "LandData{id=" + id + '}';
+        }
+        return "LandData{" + "id=" + id + ", flags=" + flags + ", textureId=" + textureId + ", name=" + name + '}';
+    }
 
-	public short getTextureId() {
-		return textureId;
-	}
+    public boolean isEmpty() {
+        return flags.flags.isEmpty()
+                && textureId == 0
+                && name.trim().isEmpty();
+    }
 
-	public void setTextureId(short textureId) {
-		this.textureId = textureId;
-	}
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.flags != null ? this.flags.hashCode() : 0);
+        hash = 37 * hash + this.textureId;
+        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
+    }
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	@Override
-	public String toString() {
-		return "LandData{" + "id=" + id + ", flags=" + flags + ", textureId=" + textureId + ", name=" + name + '}';
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LandData other = (LandData) obj;
+        if (this.flags != other.flags && (this.flags == null || !this.flags.equals(other.flags))) {
+            return false;
+        }
+        if (this.textureId != other.textureId) {
+            return false;
+        }
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
 }

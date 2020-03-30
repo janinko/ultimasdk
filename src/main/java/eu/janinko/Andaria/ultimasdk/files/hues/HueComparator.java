@@ -1,7 +1,8 @@
 package eu.janinko.Andaria.ultimasdk.files.hues;
 
 import eu.janinko.Andaria.ultimasdk.files.Hues;
-import eu.janinko.Andaria.ultimasdk.files.graphics.Color;
+import eu.janinko.Andaria.ultimasdk.graphics.Color;
+
 import java.util.Arrays;
 
 /**
@@ -17,7 +18,7 @@ public class HueComparator {
 		for(int i=0; i<3000; i++){
 			mx[i][i] = 0;
 			for(int j=i+1; j<3000; j++){
-				double distance = getSimilarity(hues.getHue(i), hues.getHue(j));
+				double distance = getSimilarity(hues.get(i), hues.get(j));
 				mx[i][j] = distance;
 				mx[j][i] = distance;
 			}

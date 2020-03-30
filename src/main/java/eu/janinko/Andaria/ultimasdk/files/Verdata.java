@@ -1,9 +1,9 @@
 
 package eu.janinko.Andaria.ultimasdk.files;
 
-import eu.janinko.Andaria.ultimasdk.files.tiledata.LandData;
-import eu.janinko.Andaria.ultimasdk.files.verdata.Verdato;
+import eu.janinko.Andaria.ultimasdk.files.verdata.Verdatum;
 import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -13,9 +13,9 @@ import java.util.List;
 /**
  * @author janinko
  */
-public class Verdata {
-	private ArrayList<Verdato> verdata = new ArrayList<Verdato>();
-	private int count;
+public class Verdata implements UOFile<Verdatum> {
+	private final ArrayList<Verdatum> verdata = new ArrayList<>();
+	private final int count;
 
 	public Verdata(InputStream is) throws IOException{
 		LittleEndianDataInputStream in = new LittleEndianDataInputStream(is);
@@ -24,15 +24,21 @@ public class Verdata {
 		verdata.ensureCapacity(count);
 
 		for(int i=0; i<count; i++){
-			verdata.add(new Verdato(in));
+			verdata.add(new Verdatum(in));
 		}
 	}
 
-	public Verdato getVerdato(int i){
-		return verdata.get(i);
-	}
+    @Override
+    public Verdatum get(int idx) {
+        return verdata.get(idx);
+    }
 
-	public List<Verdato> getVerdata(){
+    @Override
+    public int count() {
+        return count;
+    }
+
+	public List<Verdatum> getVerdata(){
 		return Collections.unmodifiableList(verdata);
 	}
 }

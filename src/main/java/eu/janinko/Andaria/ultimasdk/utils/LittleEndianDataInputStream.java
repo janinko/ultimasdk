@@ -39,7 +39,7 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 	 }
 
 	 /**
-	  * like DataInputStream.readChar except little endian.
+	  * like {@link DataInputStream#readChar()} except little endian.
 	  */
 	 public final char readChar() throws IOException
 	 {
@@ -50,7 +50,7 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 	 }
 
 	 /**
-	  * like DataInputStream.readInt except little endian.
+	  * like {@link DataInputStream#readInt()} except little endian.
 	  */
 	 public final int readInt() throws IOException
 	 {
@@ -63,7 +63,7 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 	 }
 
 	 /**
-	  * like DataInputStream.readLong except little endian.
+	  * like {@link DataInputStream#readLong()} except little endian.
 	  */
 	 public final long readLong() throws IOException
 	 {
@@ -92,10 +92,16 @@ public class LittleEndianDataInputStream extends InputStream implements DataInpu
 		 return in.read(b, off, len);
 	 }
 
+	 /**
+	  * Same as {@link DataInputStream#readFully(byte[])}.
+	  */
 	 public final void readFully(byte b[]) throws IOException {
 		 d.readFully(b, 0, b.length);
 	 }
 
+	 /**
+	  * Same as {@link DataInputStream#readFully(byte[], int, int)}.
+	  */
 	 public final void readFully(byte b[], int off, int len) throws IOException {
 		 d.readFully(b, off, len);
 	 }
