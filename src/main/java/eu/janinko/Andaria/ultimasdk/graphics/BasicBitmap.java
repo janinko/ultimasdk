@@ -1,5 +1,6 @@
 package eu.janinko.Andaria.ultimasdk.graphics;
 
+import eu.janinko.Andaria.ultimasdk.utils.LittleEndianDataInputStream;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
@@ -20,10 +21,10 @@ public class BasicBitmap {
         }
         return target;
     }
-    
+
     public static BasicBitmap readColorLines(int width, int height, RandomAccessLEDataInputStream data) throws IOException {
         BasicBitmap b = new BasicBitmap(width, height);
-        
+
         int[] starts = new int[height];
 
 		for(int i=0; i<height; i++){
@@ -43,10 +44,10 @@ public class BasicBitmap {
 		}
         return b;
     }
-    
+
 	public static BasicBitmap readColorChunks(int width, int height, RandomAccessLEDataInputStream data) throws IOException{
         BasicBitmap b = new BasicBitmap(width, height);
-        
+
 		int[] starts = new int[height];
 
 		for(int i=0; i<height; i++){
@@ -69,7 +70,7 @@ public class BasicBitmap {
 				}
 			}else{
 				x = 0;
-				y++;           
+				y++;
 				if(y < height){
 					data.seek(starts[y] + dstart);
 				}
@@ -77,7 +78,7 @@ public class BasicBitmap {
 		}
         return b;
 	}
-    
+
 	public static BasicBitmap readRaw(RandomAccessLEDataInputStream data) throws IOException{
         BasicBitmap b = new BasicBitmap(44, 44);
 
@@ -94,9 +95,38 @@ public class BasicBitmap {
         return b;
 	}
 
+    public static BasicBitmap readColumns(int width, int height, LittleEndianDataInputStream data) throws IOException {
+        BasicBitmap b = new BasicBitmap(width, height);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                b.bitmap[x][y] = Color.getInstance(data.readShort());
+            }
+        }
+        return b;
+    }
+
+    public static BasicBitmap readColumns(int i) throws IOException {
+        BasicBitmap b = new BasicBitmap(12, 20);
+
+        for (int y = 0; y < 20; y++) {
+            for (int x = 0; x < 12; x++) {
+                b.bitmap[x][y] = Color.ALPHA;
+            }
+        }
+        Color gray = Color.getInstance((short) 8, (short) 8,(short) 8);
+        for(int d = 0; d<3; d++){
+            int num = i % 10;
+            i = i / 10;
+            for(int k = 0; k < num; k++){
+                b.bitmap[10-k][13-4*d + k % 2] = gray;
+            }
+        }
+        return b;
+    }
+
 	public static BasicBitmap readAnimFrame(int width, int height, RandomAccessLEDataInputStream data, int cx, int cy, Color[] palette) throws IOException {
         BasicBitmap b = new BasicBitmap(width, height);
-        
+
 		int ln = 0;
 		int xBase = cx - 512;
 		int yBase = cy + height - 512;
@@ -105,9 +135,9 @@ public class BasicBitmap {
 		ln += yBase * delta;
 		while(true){ // not konec
 			int rowHeader = data.readInt();
-			
+
 			if(rowHeader == 0x7fff7fff ) break;  // end
-			
+
 			int runLength = rowHeader & 0xfff;
 			int lineNum = ((rowHeader >> 12) & 0x3ff) ^ 0x200;
 			int rowOfs = ((rowHeader >> 22) & 0x3ff) ^ 0x200;
@@ -126,7 +156,7 @@ public class BasicBitmap {
 		}
         return b;
 	}
-    
+
     private final Color[][] bitmap;
     protected final int height;
     protected final int width;
@@ -136,11 +166,11 @@ public class BasicBitmap {
 		this.height = o.height;
 		this.bitmap = copy(o.bitmap);
     }
-    
+
     public BasicBitmap(int width, int height) {
 		if(width <= 0) throw new IllegalArgumentException("Width can't be less then one, is " + width);
 		if(height <= 0) throw new IllegalArgumentException("Height can't be less then one, is " + height);
-		
+
 		this.bitmap = new Color[width][height];
 		this.width = width;
 		this.height = height;
@@ -151,18 +181,18 @@ public class BasicBitmap {
 			}
 		}
     }
-    
+
     public BasicBitmap(Color[][] colors){
         this.bitmap = copy(colors);
         this.width = colors.length;
         this.height = colors[0].length;
     }
-    
+
     public BasicBitmap(BufferedImage image){
         this(image.getWidth(), image.getHeight());
         WritableRaster raster = image.getRaster();
         int bands = raster.getNumBands();
-        
+
         int[] rgba = new int[bands];
         for(int x=0; x<width; x++){
             for(int y=0; y<height; y++){
@@ -193,11 +223,11 @@ public class BasicBitmap {
         }
         return image;
     }
-    
+
     public Color[][] getBitmap(){
         return copy(bitmap);
     }
-    
+
     public Color getColor(int x, int y){
         return bitmap[x][y];
     }
@@ -231,6 +261,6 @@ public class BasicBitmap {
         }
         return true;
     }
-    
-    
+
+
 }
