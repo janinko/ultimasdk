@@ -23,7 +23,7 @@ public class Skills extends IdxFile<Skill>{
     }
 
     public static Skills open(Path idxFile, Path mulFile) throws IOException {
-        try (InputStream idxStream = Files.newInputStream(mulFile)) {
+        try (InputStream idxStream = Files.newInputStream(idxFile)) {
             return new Skills(idxStream, mulFile.toFile());
         }
     }

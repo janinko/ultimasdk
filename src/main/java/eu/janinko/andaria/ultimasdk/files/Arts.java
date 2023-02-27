@@ -27,7 +27,7 @@ public class Arts extends IdxFile<Art> {
     }
 
     public static Arts open(Path idxFile, Path mulFile) throws IOException{
-        try(InputStream idxStream = Files.newInputStream(mulFile)){
+        try (InputStream idxStream = Files.newInputStream(idxFile)) {
             return new Arts(idxStream, mulFile.toFile());
         }
     }

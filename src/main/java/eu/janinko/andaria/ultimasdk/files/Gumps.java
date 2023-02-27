@@ -26,7 +26,7 @@ public class Gumps extends IdxFile<Gump> {
     }
 
     public static Gumps open(Path idxFile, Path mulFile) throws IOException {
-        try (InputStream idxStream = Files.newInputStream(mulFile)) {
+        try (InputStream idxStream = Files.newInputStream(idxFile)) {
             return new Gumps(idxStream, mulFile.toFile());
         }
     }

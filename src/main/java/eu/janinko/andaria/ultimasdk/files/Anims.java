@@ -72,7 +72,7 @@ public class Anims extends IdxFile<Anim>{
     }
     
     public static Anims open(Path idxFile, Path mulFile, AnimFile animFile) throws IOException{
-        try(InputStream idxStream = Files.newInputStream(mulFile)){
+        try (InputStream idxStream = Files.newInputStream(idxFile)) {
             return new Anims(idxStream, mulFile.toFile(), animFile);
         }
     }
