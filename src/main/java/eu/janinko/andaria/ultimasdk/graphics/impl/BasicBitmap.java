@@ -1,10 +1,8 @@
 package eu.janinko.andaria.ultimasdk.graphics.impl;
 
 import eu.janinko.andaria.ultimasdk.graphics.Color;
-import eu.janinko.andaria.ultimasdk.graphics.impl.BitmapReader;
 import eu.janinko.andaria.ultimasdk.utils.LittleEndianDataInputStream;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -187,18 +185,10 @@ public class BasicBitmap {
 
     public BasicBitmap(BufferedImage image) {
         this(image.getWidth(), image.getHeight());
-        WritableRaster raster = image.getRaster();
-        int bands = raster.getNumBands();
-
-        int[] rgba = new int[bands];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                raster.getPixel(x, y, rgba);
-                if (bands == 3) {
-                    bitmap[x][y] = Color.from8bit(rgba[0], rgba[1], rgba[2]);
-                } else {
-                    bitmap[x][y] = Color.from8bit(rgba[0], rgba[1], rgba[2], rgba[3]);
-                }
+                int pixel = image.getRGB(x, y);
+                bitmap[x][y] = Color.fromARGBint(pixel);
             }
         }
     }

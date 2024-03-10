@@ -60,6 +60,14 @@ public class Color {
         return from8bit(red, green, blue, 255);
     }
 
+    public static Color fromARGBint(int argb) {
+        int alpha = (argb >> 24) & 0xff;
+        int red = (argb >> 16) & 0xff;
+        int green = (argb >> 8) & 0xff;
+        int blue = argb & 0xff;
+        return from8bit(red, green, blue, alpha);
+    }
+
     public boolean isAlpha() {
         return (color & 0xffff) == 0x0000;
     }

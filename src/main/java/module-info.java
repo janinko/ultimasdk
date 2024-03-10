@@ -18,5 +18,6 @@ module eu.janinko.andaria.ultimasdk {
     exports eu.janinko.andaria.ultimasdk.files.unifont;
     exports eu.janinko.andaria.ultimasdk.files.verdata;
     exports eu.janinko.andaria.ultimasdk.graphics;
+    exports eu.janinko.andaria.ultimasdk.graphics.impl;
     exports eu.janinko.andaria.ultimasdk.tools;
 }
