@@ -22,7 +22,7 @@ import java.util.HashMap;
  *
  * @author Honza Brázdil <janinko.g@gmail.com>
  */
-public class UOFiles {
+public class UOFiles implements AutoCloseable {
     public static final String ANIM1_IDX = "anim.idx";
     public static final String ANIM1_MUL = "anim.mul";
     public static final String ANIM2_IDX = "anim2.idx";
@@ -407,5 +407,51 @@ public class UOFiles {
             uniFonts.put(i, uniFont);
         }
         return uniFont;
+    }
+
+    public void close() throws IOException {
+        if (anims != null) {
+            anims.close();
+            anims = null;
+        }
+        if (anims2 != null) {
+            anims2.close();
+            anims2 = null;
+        }
+        if (anims3 != null) {
+            anims3.close();
+            anims3 = null;
+        }
+        if (anims4 != null) {
+            anims4.close();
+            anims4 = null;
+        }
+        if (anims5 != null) {
+            anims5.close();
+            anims5 = null;
+        }
+        if (arts != null) {
+            arts.close();
+            arts = null;
+        }
+        if (gumps != null) {
+            gumps.close();
+            gumps = null;
+        }
+        if (map != null) {
+            map.close();
+            map = null;
+        }
+        if (statics != null) {
+            statics.close();
+            statics = null;
+        }
+        cliLocs = null;
+        fonts = null;
+        hues = null;
+        radarcol = null;
+        tiledata = null;
+
+        uniFonts.clear();
     }
 }
