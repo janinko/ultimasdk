@@ -19,7 +19,7 @@ import java.nio.file.Path;
  * @author Honza Brázdil <jbrazdil@redhat.com>
  */
 public class Gumps extends IdxFile<Gump> {
-    public static final int GUMPS_COUNT=0x10000;
+    public static final int GUMPS_COUNT=0xFFFF;
 
     private Gumps(InputStream gumpidx, File gumpmul) throws IOException {
         super(gumpidx, gumpmul, GUMPS_COUNT);
