@@ -115,7 +115,7 @@ public class UOFiles implements AutoCloseable {
     }
 
     public static Anims loadAnims2FromDir(Path dir) throws IOException {
-        return loadAnims(dir.resolve(ANIM2_IDX), dir.resolve(ANIM2_MUL));
+        return loadAnims2(dir.resolve(ANIM2_IDX), dir.resolve(ANIM2_MUL));
     }
 
     public Anims getAnims3() throws IOException {
@@ -130,7 +130,7 @@ public class UOFiles implements AutoCloseable {
     }
 
     public static Anims loadAnims3FromDir(Path dir) throws IOException {
-        return loadAnims(dir.resolve(ANIM3_IDX), dir.resolve(ANIM3_MUL));
+        return loadAnims3(dir.resolve(ANIM3_IDX), dir.resolve(ANIM3_MUL));
     }
 
     public Anims getAnims4() throws IOException {
@@ -145,7 +145,7 @@ public class UOFiles implements AutoCloseable {
     }
 
     public static Anims loadAnims4FromDir(Path dir) throws IOException {
-        return loadAnims(dir.resolve(ANIM4_IDX), dir.resolve(ANIM4_MUL));
+        return loadAnims4(dir.resolve(ANIM4_IDX), dir.resolve(ANIM4_MUL));
     }
 
     public Anims getAnims5() throws IOException {
@@ -160,7 +160,24 @@ public class UOFiles implements AutoCloseable {
     }
 
     public static Anims loadAnims5FromDir(Path dir) throws IOException {
-        return loadAnims(dir.resolve(ANIM5_IDX), dir.resolve(ANIM5_MUL));
+        return loadAnims5(dir.resolve(ANIM5_IDX), dir.resolve(ANIM5_MUL));
+    }
+
+    public Anims getAnims(Anims.AnimFile i) throws IOException {
+        switch (i) {
+            case ANIM1:
+                return getAnims();
+            case ANIM2:
+                return getAnims2();
+            case ANIM3:
+                return getAnims3();
+            case ANIM4:
+                return getAnims4();
+            case ANIM5:
+                return getAnims5();
+            default:
+                throw new IllegalArgumentException("Unknown anim file");
+        }
     }
 
     public Anims getAnims(int i) throws IOException {
