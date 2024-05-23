@@ -25,6 +25,10 @@ public class UniCharImg extends Image {
         yOffset = data.get();
         width = data.get();
         height = data.get();
-        bitmap = BasicBitmap.readBitmap(BitmapReaders.SCANLINE, width, height, data);
+        if (width > 0 && height > 0) {
+            bitmap = BasicBitmap.readBitmap(BitmapReaders.SCANLINE, width, height, data);
+        } else {
+            bitmap = BasicBitmap.EMPTY;
+        }
     }
 }

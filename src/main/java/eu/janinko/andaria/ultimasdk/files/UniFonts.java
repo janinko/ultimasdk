@@ -33,9 +33,11 @@ public class UniFonts implements UOFile<UniCharImg>  {
                 if (position > 0) {
                     buffer.position(position);
                     UniCharImg chr = new UniCharImg(buffer, i);
-                    ret.lookupTable[i] = ret.chars.size();
-                    ret.chars.add(chr);
-                    ret.maxChar = i;
+                    if (chr.getWidth() > 0 && chr.getHeight() > 0) {
+                        ret.lookupTable[i] = ret.chars.size();
+                        ret.chars.add(chr);
+                        ret.maxChar = i;
+                    }
                 } else {
                     ret.lookupTable[i] = -1;
                 }
