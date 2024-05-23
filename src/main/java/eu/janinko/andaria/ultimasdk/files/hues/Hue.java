@@ -32,7 +32,7 @@ public final class Hue {
         }
         tableStart = in.readShort();
         tableEnd = in.readShort();
-        this.setName(Utils.readName(in));
+        this.setName(Utils.readName(in, 20));
     }
 
     public void save(LittleEndianDataOutputStream out) throws IOException {

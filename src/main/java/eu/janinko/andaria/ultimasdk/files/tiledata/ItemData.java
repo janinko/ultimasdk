@@ -36,7 +36,7 @@ public final class ItemData extends TileDatum {
         this.setUnknown4(in.readByte());
         this.setValue(in.readByte()); // Unknown5
         this.setHeight(in.readByte());
-        this.setName(Utils.readName(in));
+        this.setName(Utils.readName(in, 20));
     }
 
     public ItemData(ItemData d) {

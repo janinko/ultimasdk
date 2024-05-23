@@ -15,7 +15,7 @@ public final class LandData extends TileDatum {
     public LandData(LittleEndianDataInputStream in) throws IOException {
         this.setFlags(new TileFlags(in.readInt()));
         this.setTextureId(in.readShort());
-        this.setName(Utils.readName(in));
+        this.setName(Utils.readName(in, 20));
     }
 
     public void save(LittleEndianDataOutputStream out) throws IOException {

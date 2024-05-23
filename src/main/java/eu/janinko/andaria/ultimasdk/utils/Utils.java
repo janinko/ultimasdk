@@ -11,8 +11,8 @@ import java.nio.charset.Charset;
  */
 public class Utils {
     public static final Charset chs = Charset.forName("Windows-1250");
-    public static String readName(InputStream in) throws IOException{
-        byte[] stringBuffer = new byte[20];
+    public static String readName(InputStream in, int length) throws IOException{
+        byte[] stringBuffer = new byte[length];
         in.read(stringBuffer);
         return new String(stringBuffer, chs).trim();
     }
