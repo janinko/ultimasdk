@@ -5,6 +5,8 @@ import java.nio.file.Path;
 
 import eu.janinko.andaria.ultimasdk.files.Anims;
 import eu.janinko.andaria.ultimasdk.files.Arts;
+import eu.janinko.andaria.ultimasdk.files.Body;
+import eu.janinko.andaria.ultimasdk.files.BodyConv;
 import eu.janinko.andaria.ultimasdk.files.CliLocs;
 import eu.janinko.andaria.ultimasdk.files.Fonts;
 import eu.janinko.andaria.ultimasdk.files.Gumps;
@@ -48,6 +50,8 @@ public class UOFiles implements AutoCloseable {
     public static final String STAICS0_IDX = "staidx0.mul";
     public static final String STAICS0_MUL = "statics0.mul";
     public static final String TILEDATA_MUL = "tiledata.mul";
+    public static final String BODY_DEF = "Body.def";
+    public static final String BODYCONV_DEF = "Bodyconv.def";
 
     private final Path filePath;
 
@@ -70,6 +74,8 @@ public class UOFiles implements AutoCloseable {
     private Sounds sounds;
     private Statics statics;
     private TileData tiledata;
+    private Body body;
+    private BodyConv bodyConv;
     private HashMap<Integer, UniFonts> uniFonts = new HashMap<>();
 
     public static void save(IdxFile<?> file, Path idx, Path mul) throws IOException {
@@ -438,6 +444,54 @@ public class UOFiles implements AutoCloseable {
     public static void saveToDir(TileData tileData, Path dir) throws IOException {
         Files.createDirectories(dir);
         save(tileData, dir.resolve(TILEDATA_MUL));
+    }
+
+    public Body getBody() throws IOException {
+        if (body == null) {
+            body = loadBodyFromDir(filePath);
+        }
+        return body;
+    }
+
+    public static Body loadBody(Path mul) throws IOException {
+        return Body.load(mul);
+    }
+
+    public static Body loadBodyFromDir(Path dir) throws IOException {
+        return loadBody(dir.resolve(BODY_DEF));
+    }
+
+    public static void save(Body body, Path mul) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    public static void saveToDir(Body body, Path dir) throws IOException {
+        Files.createDirectories(dir);
+        save(body, dir.resolve(BODY_DEF));
+    }
+
+    public BodyConv getBodyConv() throws IOException {
+        if (bodyConv == null) {
+            bodyConv = loadBodyConvFromDir(filePath);
+        }
+        return bodyConv;
+    }
+
+    public static BodyConv loadBodyConv(Path mul) throws IOException {
+        return BodyConv.load(mul);
+    }
+
+    public static BodyConv loadBodyConvFromDir(Path dir) throws IOException {
+        return loadBodyConv(dir.resolve(BODYCONV_DEF));
+    }
+
+    public static void save(BodyConv bodyConv, Path mul) throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    public static void saveToDir(BodyConv bodyConv, Path dir) throws IOException {
+        Files.createDirectories(dir);
+        save(bodyConv, dir.resolve(BODYCONV_DEF));
     }
 
     public UniFonts getUniFonts(int i) throws IOException {

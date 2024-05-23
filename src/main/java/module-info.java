@@ -7,6 +7,7 @@ module eu.janinko.andaria.ultimasdk {
     exports eu.janinko.andaria.ultimasdk.files.anims;
     exports eu.janinko.andaria.ultimasdk.files.arts;
     exports eu.janinko.andaria.ultimasdk.files.cliloc;
+    exports eu.janinko.andaria.ultimasdk.files.defs;
     exports eu.janinko.andaria.ultimasdk.files.fonts;
     exports eu.janinko.andaria.ultimasdk.files.gumps;
     exports eu.janinko.andaria.ultimasdk.files.hues;
