@@ -13,6 +13,7 @@ module eu.janinko.andaria.ultimasdk {
     exports eu.janinko.andaria.ultimasdk.files.index;
     exports eu.janinko.andaria.ultimasdk.files.map;
     exports eu.janinko.andaria.ultimasdk.files.skills;
+    exports eu.janinko.andaria.ultimasdk.files.sounds;
     exports eu.janinko.andaria.ultimasdk.files.statics;
     exports eu.janinko.andaria.ultimasdk.files.tiledata;
     exports eu.janinko.andaria.ultimasdk.files.unifont;

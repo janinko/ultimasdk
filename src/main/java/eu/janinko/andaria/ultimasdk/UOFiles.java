@@ -11,6 +11,7 @@ import eu.janinko.andaria.ultimasdk.files.Gumps;
 import eu.janinko.andaria.ultimasdk.files.Hues;
 import eu.janinko.andaria.ultimasdk.files.Map;
 import eu.janinko.andaria.ultimasdk.files.Radarcol;
+import eu.janinko.andaria.ultimasdk.files.Sounds;
 import eu.janinko.andaria.ultimasdk.files.Statics;
 import eu.janinko.andaria.ultimasdk.files.TileData;
 import eu.janinko.andaria.ultimasdk.files.UniFonts;
@@ -42,6 +43,8 @@ public class UOFiles implements AutoCloseable {
     public static final String HUES_MUL = "hues.mul";
     public static final String MAP0_MUL = "map0.mul";
     public static final String RADARCOL_MUL = "radarcol.mul";
+    public static final String SOUND_IDX = "soundidx.mul";
+    public static final String SOUND_MUL = "sound.mul";
     public static final String STAICS0_IDX = "staidx0.mul";
     public static final String STAICS0_MUL = "statics0.mul";
     public static final String TILEDATA_MUL = "tiledata.mul";
@@ -64,6 +67,7 @@ public class UOFiles implements AutoCloseable {
     private Hues hues;
     private Map map;
     private Radarcol radarcol;
+    private Sounds sounds;
     private Statics statics;
     private TileData tiledata;
     private HashMap<Integer, UniFonts> uniFonts = new HashMap<>();
@@ -353,6 +357,26 @@ public class UOFiles implements AutoCloseable {
     public static void saveToDir(Radarcol radarcol, Path dir) throws IOException {
         Files.createDirectories(dir);
         save(radarcol, dir.resolve(RADARCOL_MUL));
+    }
+
+    public Sounds getSounds() throws IOException {
+        if (sounds == null) {
+            sounds = loadSoundsFromDir(filePath);
+        }
+        return sounds;
+    }
+
+    public static Sounds loadSounds(Path idx, Path mul) throws IOException {
+        return Sounds.open(idx, mul);
+    }
+
+    public static Sounds loadSoundsFromDir(Path dir) throws IOException {
+        return loadSounds(dir.resolve(SOUND_IDX), dir.resolve(SOUND_MUL));
+    }
+
+    public static void saveToDir(Sounds sounds, Path dir) throws IOException {
+        Files.createDirectories(dir);
+        save(sounds, dir.resolve(SOUND_IDX), dir.resolve(SOUND_MUL));
     }
 
     public Statics getStatics() throws IOException {
