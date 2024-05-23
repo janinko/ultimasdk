@@ -87,6 +87,10 @@ public class Anims extends IdxFile<Anim>{
         return anim;
     }
 
+    public boolean isBody(int body) {
+        return fileIndex.isData(bodyToIndex(body));
+    }
+
     @Override
     public int count(){
         int hight = animFile.bodyHighCount * 110;
@@ -104,6 +108,13 @@ public class Anims extends IdxFile<Anim>{
     }
 
     public Anim getAnim(int body, int action, Body.Direction dir) throws IOException {
+        int index = bodyToIndex(body);
+        index += action * 5;
+        index += dir.getOffset();
+        return get(index);
+    }
+
+    private int bodyToIndex(int body) {
         int index;
         if (body < animFile.getHighBound()) {
             index = body * 110;
@@ -112,9 +123,7 @@ public class Anims extends IdxFile<Anim>{
         } else {
             index = animFile.bodyHighCount * 110 + animFile.bodyLowCount * 65 + ((body - animFile.getLowBound()) * 175);
         }
-        index += action * 5;
-        index += dir.getOffset();
-        return get(index);
+        return index;
     }
 
     public Body getBody(int body) throws IOException{

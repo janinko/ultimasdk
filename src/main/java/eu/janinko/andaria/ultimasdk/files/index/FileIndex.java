@@ -51,7 +51,10 @@ public class FileIndex {
         }
     }
 
-    public boolean isData(int i){
+    public boolean isData(int i) {
+        if (i >= index.size()) {
+            return false;
+        }
         return index.get(i).length > 0;
     }
 
