@@ -15,6 +15,8 @@ import java.nio.ByteBuffer;
  */
 public class BasicBitmap {
 
+    public final static BasicBitmap EMPTY = new BasicBitmap();
+
     public static Color[][] copy(Color[][] input) {
         Color[][] target = new Color[input.length][];
         for (int i = 0; i < input.length; i++) {
@@ -151,6 +153,12 @@ public class BasicBitmap {
     private final Color[][] bitmap;
     protected final int height;
     protected final int width;
+
+    private BasicBitmap(){
+        bitmap = new Color[0][0];
+        height = 0;
+        width = 0;
+    }
 
     public BasicBitmap(BasicBitmap o) {
         this.width = o.width;
