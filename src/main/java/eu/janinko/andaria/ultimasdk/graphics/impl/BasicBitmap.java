@@ -93,12 +93,12 @@ public class BasicBitmap {
 
         for (int x = 0; x < 22; x++) {
             for (int y = 21 - x; y <= 22 + x; y++) {
-                b.bitmap[x][y] = Color.getInstance(data.readShort());
+                b.bitmap[y][x] = Color.getInstance(data.readShort());
             }
         }
         for (int x = 22; x < 44; x++) {
             for (int y = x - 22; y <= 65 - x; y++) {
-                b.bitmap[x][y] = Color.getInstance(data.readShort());
+                b.bitmap[y][x] = Color.getInstance(data.readShort());
             }
         }
         return b;
