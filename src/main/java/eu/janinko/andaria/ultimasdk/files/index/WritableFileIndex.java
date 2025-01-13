@@ -44,7 +44,6 @@ public class WritableFileIndex extends FileIndex{
             int offset = 0;
             for (int i = 0; i < index.size(); i++) {
                 if (overrides.containsKey(i)) {
-                    System.out.println("override " + i);
                     DataPack data = overrides.get(i);
                     if (data == null || data.getData().length == 0) {
                         out.writeInt(-1);
@@ -61,7 +60,7 @@ public class WritableFileIndex extends FileIndex{
                     offset += saveDatum(i, offset, out, mulFile);
                 }
             }
-        }finally{
+        } finally {
             mulFile.close();
         }
     }
