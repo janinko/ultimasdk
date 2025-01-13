@@ -21,12 +21,16 @@ public class Art extends Image{
     private int width;
     private int height;
 
-    public Art(RandomAccessLEDataInputStream data) throws IOException {
-        flag = data.readInt();
-        if(flag > 0xFFFF || flag == 0){
+    public Art(RandomAccessLEDataInputStream data, boolean terrain) throws IOException {
+        if (terrain) {
             loadRaw(data);
-        }else{
-            loadRun(data);
+        } else {
+            flag = data.readInt();
+            if (flag > 0xFFFF || flag == 0) {
+                loadRaw(data);
+            } else {
+                loadRun(data);
+            }
         }
     }
     
@@ -49,11 +53,15 @@ public class Art extends Image{
         bitmap = BasicBitmap.readColorChunks(width, height, data);
     }
 
-    public void save(RandomAccessLEDataOutputStream data) throws IOException{
-        data.writeInt(flag);
-        data.writeShort(width);
-        data.writeShort(height);
-        data.write(BitmapWriter.writeColorChunks(bitmap));
+    public void save(RandomAccessLEDataOutputStream data, boolean terrain) throws IOException{
+        if (terrain) {
+            throw new UnsupportedOperationException();
+        } else {
+            data.writeInt(flag);
+            data.writeShort(width);
+            data.writeShort(height);
+            data.write(BitmapWriter.writeColorChunks(bitmap));
+        }
     }
     
     public int getWidth() {
