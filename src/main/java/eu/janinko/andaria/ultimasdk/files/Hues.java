@@ -14,6 +14,8 @@ import java.util.List;
 
 /**
  *
+ * Note: Hues are indexed from 1 as in game hue number 0 is representing no hue at all.
+ *
  * @author Honza Brázdil <jbrazdil@redhat.com>
  */
 public class Hues implements UOFile<Hue>{
@@ -30,7 +32,7 @@ public class Hues implements UOFile<Hue>{
             }
 
             Hue hue = new Hue(in);
-            hue.setId(i);
+            hue.setId(i + 1);
             hues.add(hue);
         }
     }
@@ -42,14 +44,15 @@ public class Hues implements UOFile<Hue>{
     }
 
     public void save(OutputStream os) throws IOException{
-        LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(os);
+        try (LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(os)) {
 
-        for(int i=0; i<COLORS_COUNT; i++){
-            if((i & 0x07) == 0){ // 0x0f = 7 = 0000 0111
-                out.writeInt(hueHeaders.get(i >> 3));
+            for (int i = 0; i < COLORS_COUNT; i++) {
+                if ((i & 0x07) == 0) { // 0x0f = 7 = 0000 0111
+                    out.writeInt(hueHeaders.get(i >> 3));
+                }
+
+                hues.get(i).save(out);
             }
-
-            hues.get(i).save(out);
         }
     }
 
@@ -62,8 +65,8 @@ public class Hues implements UOFile<Hue>{
     }
 
     /**
-     * Gets UO asset - hue - from file. Because in UO hue 0 means no hue applied, the indexing here respect that and inexing
-     * starts with number 1. That means that the last valid index is count() and not count()-1.
+     * Gets UO asset - hue - from file. Because in UO hue 0 means no hue applied, the indexing here respect that and
+     * indexing starts with number 1. That means that the last valid index is count() and not count()-1.
      * @param idx Index of the hue (starts with 1).
      */
     @Override

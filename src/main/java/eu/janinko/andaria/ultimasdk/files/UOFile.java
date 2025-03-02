@@ -13,7 +13,7 @@ public interface UOFile<T> {
      * Gets UO asset from file.
      * @param idx index of the asset.
      * @return The UO asset or null if it's not present.
-     * @throws IOException When there was problems reading the resassetource from file.
+     * @throws IOException When there were problems reading the asset from file.
      */
     T get(int idx) throws IOException;
 

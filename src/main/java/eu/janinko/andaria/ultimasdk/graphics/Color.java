@@ -12,7 +12,24 @@ import lombok.Value;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Color {
 
+    private static final int[] EIGHT_BIT_INT = {
+            0x0, 0x8, 0x10, 0x18, 0x21, 0x29, 0x31, 0x39, 0x42, 0x4a, 0x52, 0x5a, 0x63, 0x6b, 0x73, 0x7b, 0x84, 0x8c,
+            0x94, 0x9c, 0xa5, 0xad, 0xb5, 0xbd, 0xc6, 0xce, 0xd6, 0xde, 0xe7, 0xef, 0xf7, 0xff
+    };
+
+    private static final byte[] EIGHT_BIT_BYTE = {
+            0x0, 0x8, 0x10, 0x18, 0x21, 0x29, 0x31, 0x39, 0x42, 0x4a, 0x52, 0x5a, 0x63, 0x6b, 0x73, 0x7b, (byte) 0x84,
+            (byte) 0x8c, (byte) 0x94, (byte) 0x9c, (byte) 0xa5, (byte) 0xad, (byte) 0xb5, (byte) 0xbd, (byte) 0xc6,
+            (byte) 0xce,(byte) 0xd6, (byte) 0xde, (byte) 0xe7, (byte) 0xef, (byte) 0xf7, (byte) 0xff
+    };
+
+    /**
+     * Transparent is represented in Ultima as 0x0000.
+     */
     public static final Color ALPHA = new Color((short) 0x0000);
+    /**
+     * Black is represented in Ultima as 0x8000, so it's distinct from transparent 0x0000.
+     */
     public static final Color BLACK = new Color((short) 0x8000);
     public static final Color WHITE = new Color((short) 0x7FFF);
 
@@ -88,6 +105,10 @@ public class Color {
         return convertColor5to8(get5Blue());
     }
 
+    public byte getBlueByte() {
+        return convertColor5to8Byte(get5Blue());
+    }
+
     public byte get5Green() {
         return (byte) ((color & 0x3e0) >>> 5);
     }
@@ -96,12 +117,20 @@ public class Color {
         return convertColor5to8(get5Green());
     }
 
+    public byte getGreenByte() {
+        return convertColor5to8Byte(get5Green());
+    }
+
     public byte get5Blue() {
         return (byte) (color & 0x1f);
     }
 
     public int getRed() {
         return convertColor5to8(get5Red());
+    }
+
+    public byte getRedByte() {
+        return convertColor5to8Byte(get5Red());
     }
 
     public int get5Average() {
@@ -116,47 +145,121 @@ public class Color {
         return (getAlpha() << 24) + (getRed() << 16) + (getGreen() << 8) + getBlue();
     }
 
-    public static int convertColor5to8(int c) {
-        switch (c) {
-            case 31: return 0xff; // 255
-            case 30: return 0xf7; // 247
-            case 29: return 0xef; // 239
-            case 28: return 0xe7; // 231
-            case 27: return 0xde; // 222
-            case 26: return 0xd6; // 214
-            case 25: return 0xce; // 206
-            case 24: return 0xc6; // 198
-            case 23: return 0xbd; // 189
-            case 22: return 0xb5; // 181
-            case 21: return 0xad; // 173
-            case 20: return 0xa5; // 165
-            case 19: return 0x9c; // 156
-            case 18: return 0x94; // 148
-            case 17: return 0x8c; // 140
-            case 16: return 0x84; // 132
-            case 15: return 0x7b; // 123
-            case 14: return 0x73; // 115
-            case 13: return 0x6b; // 107
-            case 12: return 0x63; // 99
-            case 11: return 0x5a; // 90
-            case 10: return 0x52; // 82
-            case 9: return 0x4a; // 74
-            case 8: return 0x42; // 66
-            case 7: return 0x39; // 57
-            case 6: return 0x31; // 49
-            case 5: return 0x29; // 41
-            case 4: return 0x21; // 33
-            case 3: return 0x18; // 24
-            case 2: return 0x10; // 16
-            case 1: return 0x8; // 8
-            case 0: return 0x0; // 0
-            default: throw new IllegalArgumentException("Number to convert can be only in range 0-31. It is " + c);
+    public int getAGBRPre() {
+        if (isAlpha()) {
+            return 0;
         }
+        return (getRed() << 16) + (getGreen() << 8) + getBlue();
+    }
+
+    public int getBGRA() {
+        return (getBlue() << 24) + (getGreen() << 16) + (getRed() << 8) + getAlpha();
+    }
+
+    public int getBGRAPre() {
+        if (isAlpha()) {
+            return 0;
+        }
+        return (getBlue() << 24) + (getGreen() << 16) + (getRed() << 8) + 0xff;
+    }
+
+    public Hsv getHsv() {
+        return rgb2hsv(get5Red(), get5Green(), get5Blue());
+    }
+
+    public static int convertColor5to8(int c) {
+        if(c < 0 || c > 31){
+            throw new IllegalArgumentException("Number to convert can be only in range 0-31. It is " + c);
+        }
+        return EIGHT_BIT_INT[c];
+    }
+
+    public static byte convertColor5to8Byte(int c) {
+        if(c < 0 || c > 31){
+            throw new IllegalArgumentException("Number to convert can be only in range 0-31. It is " + c);
+        }
+        return EIGHT_BIT_BYTE[c];
     }
 
     public static short convertColor8to5(int c) {
         return (short) (c / 8);
     }
+
+    public static Hsv rgb2hsv(short red, short green, short blue) {
+        double h, s, v;
+
+        short min = red, max = red;
+        if (green > max) max = green;
+        if (blue > max) max = blue;
+        if (green < min) min = green;
+        if (blue < min) min = blue;
+        int delta = max - min;
+
+        if (delta == 0) {
+            return new Hsv(0, 0, max / 31.0);
+        }
+
+        if (max == red) {
+            h = (double) (green - blue) / delta % 6;
+        } else if (max == green) {
+            h = (double) (blue - red) / delta + 2;
+        } else {
+            h = (double) (red - green) / delta + 4;
+        }
+        h *= 60;
+
+        if(h < 0){
+            h = 360 + h;
+        }
+
+        if (max == 0) {
+            s = 0;
+        } else {
+            s = (double) delta / max;
+        }
+
+        v = max / 31.0;
+
+        return new Hsv(h, s, v);
+    }
+
+    public static Color hsv2rgb(double h, double s, double v) {
+        double r, g, b;
+        if(h >= 360.0) {h -= 360.0;}
+
+        double hh = h / 60;
+        int i = ((int) hh) % 6;
+
+        double f = hh - i;
+        double p = v * (1 - s);
+        double q = v * (1 - f * s);
+        double t = v * (1 - (1 - f) * s);
+
+        switch (i) {
+            case 0:
+                r = v; g = t; b = p; break;
+            case 1:
+                r = q; g = v; b = p; break;
+            case 2:
+                r = p; g = v; b = t; break;
+            case 3:
+                r = p; g = q; b = v; break;
+            case 4:
+                r = t; g = p; b = v; break;
+            case 5:
+                r = v; g = p; b = q; break;
+            default:
+                throw new IllegalStateException();
+        }
+
+        return getInstance((short) Math.round(r*31), (short) Math.round(g*31), (short) Math.round(b*31));
+    }
+
+    public static Color hsv2rgb(Hsv hsv) {
+        return hsv2rgb(hsv.h, hsv.s, hsv.v);
+    }
+
+    public record Hsv(double h, double s, double v){}
 
     public double distance(Color other) {
         int rmean = (this.getRed() + other.getRed()) / 2;

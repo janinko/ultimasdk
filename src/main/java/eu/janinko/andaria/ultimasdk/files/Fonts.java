@@ -36,10 +36,10 @@ public class Fonts implements UOFile<Font> {
     }
 
     public void save(OutputStream os) throws IOException {
-        LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(os);
-
-        for (Font font : fonts) {
-            font.save(os);
+        try (LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(os)) {
+            for (Font font : fonts) {
+                font.save(out);
+            }
         }
     }
 

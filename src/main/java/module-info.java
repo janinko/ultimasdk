@@ -1,6 +1,7 @@
 module eu.janinko.andaria.ultimasdk {
     requires java.desktop;
     requires static lombok;
+    requires jdk.jshell;
 
     exports eu.janinko.andaria.ultimasdk;
     exports eu.janinko.andaria.ultimasdk.files;
@@ -22,4 +23,5 @@ module eu.janinko.andaria.ultimasdk {
     exports eu.janinko.andaria.ultimasdk.graphics;
     exports eu.janinko.andaria.ultimasdk.graphics.impl;
     exports eu.janinko.andaria.ultimasdk.tools;
+    exports eu.janinko.andaria.ultimasdk.utils;
 }

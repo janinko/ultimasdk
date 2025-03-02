@@ -3,8 +3,6 @@ package eu.janinko.andaria.ultimasdk.files;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import eu.janinko.andaria.ultimasdk.files.cliloc.CliLoc;
@@ -12,6 +10,7 @@ import eu.janinko.andaria.ultimasdk.utils.LittleEndianDataInputStream;
 import eu.janinko.andaria.ultimasdk.utils.LittleEndianDataOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.TreeMap;
 
 /**
  *
@@ -22,7 +21,7 @@ public class CliLocs implements UOFile<CliLoc>{
     private final int header1;
     private final short header2;
 
-    private final HashMap<Integer, CliLoc> entries = new HashMap<>();
+    private final TreeMap<Integer, CliLoc> entries = new TreeMap<>();
     private final int count;
 
     private CliLocs(InputStream is) throws IOException {
@@ -31,17 +30,17 @@ public class CliLocs implements UOFile<CliLoc>{
         int largest = -1;
         header1 = in.readInt();
         header2 = in.readShort();
+        System.out.println("Cliloc headers: " + header1 + " " + header2);
         while (in.available() > 0) {
             CliLoc cliLoc = new CliLoc(in);
-            final int number = cliLoc.getNumber();
-            if(entries.containsKey(number)){
-                throw new IllegalArgumentException("Multiple entries with same number: " + number);
+            final int id = cliLoc.getId();
+            if(entries.containsKey(id)){
+                throw new IllegalArgumentException("Multiple entries with same id: " + id);
             }
-            if(largest < number) {
-                largest = number;
+            if(largest < id) {
+                largest = id;
             }
-            System.out.println(number);
-            entries.put(number, cliLoc);
+            entries.put(id, cliLoc);
         }
         count = largest;
     }
@@ -67,25 +66,23 @@ public class CliLocs implements UOFile<CliLoc>{
     }
 
     public void save(OutputStream os) throws IOException{
+        try (LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(os)) {
 
-        LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(os);
+            out.writeInt(header1);
+            out.writeShort(header2);
 
-        out.writeInt(header1);
-        out.writeShort(header2);
-
-        Iterator<CliLoc> it = entries.entrySet().stream()
-                .sorted(Comparator.comparing(java.util.Map.Entry::getKey))
-                .map(java.util.Map.Entry::getValue)
-                .iterator();
-        while(it.hasNext()) {
-            it.next().save(out);
+            Iterator<CliLoc> it = entries.entrySet().stream()
+                    .sorted(java.util.Map.Entry.comparingByKey())
+                    .map(java.util.Map.Entry::getValue)
+                    .iterator();
+            while (it.hasNext()) {
+                it.next().save(out);
+            }
         }
-
-
     }
 
     public void set(CliLoc c) {
-        entries.put(c.getNumber(), c);
+        entries.put(c.getId(), c);
     }
 
 }

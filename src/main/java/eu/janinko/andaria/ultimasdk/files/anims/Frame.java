@@ -13,15 +13,37 @@ import java.util.Arrays;
 
 import eu.janinko.andaria.ultimasdk.files.hues.Hue;
 import eu.janinko.andaria.ultimasdk.graphics.impl.BasicBitmap;
+import lombok.Getter;
 
 /**
+ * Frame alignment:<br>
+ * center (+) - center of the game square<br>
+ * centX (&lt;  &gt;) - From left of frame to center. Positive if left of frame is left of center. I.e. how much should
+ * the frame be shifted left.<br>
+ * centY (^ v) - From bottom of frame to center. Positive if bottom of frame is above center. I.e. how much should the
+ * frame be shifted up.<br>
+ * <pre>
+ *  _____________
+ * |             |
+ * |             |
+ * |             |
+ * |             |
+ * |  centX      |
+ * |&lt;  &gt;+        |
+ * |    ^        |
+ * |     centY   |
+ * |    v        |
+ * |_____________|
+ * </pre>
  *
  * @author Honza Brázdil <janinko.g@gmail.com>
  */
 public class Frame extends Image{
     private final int centX;
     private final int centY;
+    @Getter
     private final int width;
+    @Getter
     private final int height;
     private Color[][] data;
 
@@ -43,15 +65,77 @@ public class Frame extends Image{
         return centeredImage(editableBitmap);
     }
 
+    /**
+     * Compute left padding so the frame is placed in image with given width. Placed means is that the frame is aligned
+     * to it's game square. The game square being in the middle of the image.
+     */
+    public int leftPadding(int width){
+        return width / 2 - centX;
+    }
+
+    /**
+     * Compute top padding so the frame is placed in image with game square centered {@code centerShift} pixels from the
+     * top. Placed means is that the frame is aligned to it's game square.
+     */
+    public int topPadding(int centerShift) {
+        return centerShift - centY - height;
+    }
+
+    /**
+     * Compute how big portion of the frame is below center of the game square.
+     */
+    public int biasDown(){
+        return Math.max(0, -centY);
+    }
+
+    /**
+     * Compute how big portion of the frame is above center of the game square.
+     */
+    public int biasUp(){
+        return Math.max(0, height + centY);
+    }
+
+    /**
+     * Compute minimum width of image with placed frame.
+     */
+    public int getViewWidth() {
+        int left = centX;
+        int right = width - centX + 1;
+        int horizontal = Math.max(left, right);
+        return horizontal * 2;
+    }
+
+    /**
+     * Computes minimum height of image with placed frame. Placed means is that the frame is aligned to it's game
+     * square. Returns height with at least the whole of the square being visible on the image.
+     */
+    public int getViewHeight() {
+        int bottomPadding = centY + 21;
+        return Math.max(height, height + bottomPadding);
+    }
+
+    public int getXOffset() {
+        int left = centX;
+        int right = width - centX + 1;
+        int horizontal = Math.max(left, right);
+        return horizontal - left;
+        // A: left - left = 0
+        // B: right - left = width - centX + 1 - centX = 1 + width - 2*centX
+    }
+
+    public int getYOffset() {
+        return 0;
+    }
+
     private BufferedImage centeredImage(final BasicBitmap bitmap1) {
         int left = centX;
         int right = width - centX + 1;
         int down = centY + 21;
         int up = height + centY;
                 
-        int horizontal = (left > right ? left : right);
+        int horizontal = Math.max(left, right);
         int w = horizontal*2;
-        int h = height + down;
+        int h = Math.max(height, height + down);
         
         System.out.print("centX=" + centX + ", centY=" + centY + ", width=" + width + ", height=" + height);
         System.out.print(", right=" + right + ", left=" + left + ", down=" + down + ", up=" + up);

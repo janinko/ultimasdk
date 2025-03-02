@@ -5,6 +5,7 @@ import eu.janinko.andaria.ultimasdk.utils.LittleEndianDataOutputStream;
 import eu.janinko.andaria.ultimasdk.files.tiledata.ItemData;
 import eu.janinko.andaria.ultimasdk.files.tiledata.LandData;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,11 +22,11 @@ import java.nio.file.Path;
  */
 public class TileData implements UOFile<TileDatum> {
     private static final int LAND_COUNT = 0x4000;
-    private static final int ITEM_COUNT = 0x8000;
+    private static final int ITEM_COUNT = 0x10000;
     private final ArrayList<LandData> landData = new ArrayList<>(LAND_COUNT);
     private final ArrayList<Integer> landHeaders = new ArrayList<>(0x400);
     private final ArrayList<ItemData> itemData = new ArrayList<>(ITEM_COUNT);
-    private final ArrayList<Integer> itemHeaders = new ArrayList<>(0x800);
+    private final ArrayList<Integer> itemHeaders = new ArrayList<>(0x1000);
 
     private TileData(InputStream is) throws IOException {
         LittleEndianDataInputStream in = new LittleEndianDataInputStream(is);
@@ -40,14 +41,20 @@ public class TileData implements UOFile<TileDatum> {
             landData.add(land);
         }
 
-        for (int i = 0; i < ITEM_COUNT; i++) {
-            if ((i & 0x1f) == 0) { // 0x1f = 31 = 0001 1111
-                itemHeaders.add(in.readInt());
+        boolean reading = true;
+        int i=0;
+        while(reading){
+            try{
+                if ((i & 0x1f) == 0) { // 0x1f = 31 = 0001 1111
+                    itemHeaders.add(in.readInt());
+                }
+                ItemData item = new ItemData(in);
+                item.setId(i);
+                itemData.add(item);
+                i++;
+            }catch(EOFException ex){
+                reading = false;
             }
-
-            ItemData item = new ItemData(in);
-            item.setId(i);
-            itemData.add(item);
         }
     }
 
@@ -72,26 +79,33 @@ public class TileData implements UOFile<TileDatum> {
     }
 
     public void save(OutputStream os) throws IOException{
-        LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(os);
+        try (LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(os)) {
 
-        for(int i=0; i<LAND_COUNT; i++){
-            if((i & 0x1f) == 0){ // 0x1f = 31 = 0001 1111
-                out.writeInt(landHeaders.get(i / 32));
+            for (int i = 0; i < LAND_COUNT; i++) {
+                if ((i & 0x1f) == 0) { // 0x1f = 31 = 0001 1111
+                    out.writeInt(landHeaders.get(i / 32));
+                }
+
+                landData.get(i).save(out);
             }
 
-            landData.get(i).save(out);
-        }
+            for (int i = 0; i < itemData.size(); i++) {
+                if ((i & 0x1f) == 0) { // 0x1f = 31 = 0001 1111
+                    out.writeInt(itemHeaders.get(i / 32));
+                }
 
-        for(int i=0; i<ITEM_COUNT; i++){
-            if((i & 0x1f) == 0){ // 0x1f = 31 = 0001 1111
-                out.writeInt(itemHeaders.get(i / 32));
+                itemData.get(i).save(out);
             }
-
-            itemData.get(i).save(out);
         }
     }
 
     public ItemData getItem(int i){
+        if (i > ITEM_COUNT) {
+            throw new IllegalArgumentException("Item index " + i + " too large.");
+        }
+        if (i >= itemData.size()) {
+            return new ItemData(i);
+        }
         return itemData.get(i);
     }
 
@@ -108,7 +122,20 @@ public class TileData implements UOFile<TileDatum> {
     }
 
     public void setItem(int i, ItemData item) {
-        itemData.set(i, item);
+        if (i > ITEM_COUNT) {
+            throw new IllegalArgumentException("Item index " + i + " too large.");
+        }
+        if (i >= itemData.size()) {
+            for (int j = itemData.size(); j < i; j++) { // Fill missing slots with empty data
+                if ((j & 0x1f) == 0) { // 0x1f = 31 = 0001 1111
+                    itemHeaders.add(0); // TODO: not sure
+                }
+                itemData.add(new ItemData(i));
+            }
+            itemData.add(item);
+        } else {
+            itemData.set(i, item);
+        }
     }
 
     @Override

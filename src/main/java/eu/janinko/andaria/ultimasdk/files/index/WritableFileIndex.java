@@ -40,7 +40,7 @@ public class WritableFileIndex extends FileIndex{
 
     @Override
     public void save(OutputStream idxStream, OutputStream mulFile) throws IOException {
-        try (LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(idxStream)) {
+        try (mulFile; LittleEndianDataOutputStream out = new LittleEndianDataOutputStream(idxStream)) {
             int offset = 0;
             for (int i = 0; i < index.size(); i++) {
                 if (overrides.containsKey(i)) {
@@ -60,8 +60,6 @@ public class WritableFileIndex extends FileIndex{
                     offset += saveDatum(i, offset, out, mulFile);
                 }
             }
-        } finally {
-            mulFile.close();
         }
     }
 

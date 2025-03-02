@@ -1,6 +1,8 @@
 package eu.janinko.andaria.ultimasdk;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import eu.janinko.andaria.ultimasdk.files.Anims;
@@ -18,6 +20,9 @@ import eu.janinko.andaria.ultimasdk.files.Statics;
 import eu.janinko.andaria.ultimasdk.files.TileData;
 import eu.janinko.andaria.ultimasdk.files.UniFonts;
 import eu.janinko.andaria.ultimasdk.files.index.IdxFile;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.nio.file.Files;
 import java.util.HashMap;
 
@@ -53,10 +58,19 @@ public class UOFiles implements AutoCloseable {
     public static final String BODY_DEF = "Body.def";
     public static final String BODYCONV_DEF = "Bodyconv.def";
 
+    @Getter
     private final Path filePath;
 
+    @Getter
+    private final Charset defsCharset;
+
     public UOFiles(Path filePath) {
+        this(filePath, StandardCharsets.UTF_8);
+    }
+
+    public UOFiles(Path filePath, Charset defsCharset) {
         this.filePath = filePath;
+        this.defsCharset = defsCharset;
     }
 
     private Anims anims;
@@ -89,6 +103,10 @@ public class UOFiles implements AutoCloseable {
         return anims;
     }
 
+    public void saveAnims(Path dir) throws IOException {
+        saveToDir(anims, dir);
+    }
+
     public static Anims loadAnims(Path idx, Path mul) throws IOException {
         return Anims.open(idx, mul, Anims.AnimFile.ANIM1);
     }
@@ -116,6 +134,10 @@ public class UOFiles implements AutoCloseable {
         return anims2;
     }
 
+    public void saveAnims2(Path dir) throws IOException {
+        saveToDir(anims2, dir);
+    }
+
     public static Anims loadAnims2(Path idx, Path mul) throws IOException {
         return Anims.open(idx, mul, Anims.AnimFile.ANIM2);
     }
@@ -129,6 +151,10 @@ public class UOFiles implements AutoCloseable {
             anims3 = loadAnims3FromDir(filePath);
         }
         return anims3;
+    }
+
+    public void saveAnims3(Path dir) throws IOException {
+        saveToDir(anims3, dir);
     }
 
     public static Anims loadAnims3(Path idx, Path mul) throws IOException {
@@ -146,6 +172,10 @@ public class UOFiles implements AutoCloseable {
         return anims4;
     }
 
+    public void saveAnims4(Path dir) throws IOException {
+        saveToDir(anims4, dir);
+    }
+
     public static Anims loadAnims4(Path idx, Path mul) throws IOException {
         return Anims.open(idx, mul, Anims.AnimFile.ANIM4);
     }
@@ -159,6 +189,10 @@ public class UOFiles implements AutoCloseable {
             anims5 = loadAnims5FromDir(filePath);
         }
         return anims5;
+    }
+
+    public void saveAnims5(Path dir) throws IOException {
+        saveToDir(anims5, dir);
     }
 
     public static Anims loadAnims5(Path idx, Path mul) throws IOException {
@@ -229,6 +263,10 @@ public class UOFiles implements AutoCloseable {
         return arts;
     }
 
+    public void saveArts(Path dir) throws IOException {
+        saveToDir(arts, dir);
+    }
+
     public static Arts loadArts(Path idx, Path mul) throws IOException {
         return Arts.open(idx, mul);
     }
@@ -249,6 +287,10 @@ public class UOFiles implements AutoCloseable {
         return cliLocs;
     }
 
+    public void saveCliLocs(Path dir) throws IOException {
+        saveToDir(cliLocs, dir);
+    }
+
     public static CliLocs loadCliLocs(Path mul) throws IOException {
         return CliLocs.load(mul);
     }
@@ -257,13 +299,13 @@ public class UOFiles implements AutoCloseable {
         return loadCliLocs(dir.resolve(CLILOC_ENU));
     }
 
-    public static void save(CliLocs fonts, Path mul) throws IOException {
-        fonts.save(Files.newOutputStream(mul));
+    public static void save(CliLocs clilocs, Path mul) throws IOException {
+        clilocs.save(Files.newOutputStream(mul));
     }
 
-    public static void saveToDir(CliLocs fonts, Path dir) throws IOException {
+    public static void saveToDir(CliLocs clilocs, Path dir) throws IOException {
         Files.createDirectories(dir);
-        save(fonts, dir.resolve(FONTS_MUL));
+        save(clilocs, dir.resolve(CLILOC_ENU));
     }
 
     public Fonts getFonts() throws IOException {
@@ -271,6 +313,10 @@ public class UOFiles implements AutoCloseable {
             fonts = loadFontsFromDir(filePath);
         }
         return fonts;
+    }
+
+    public void saveFonts(Path dir) throws IOException {
+        saveToDir(fonts, dir);
     }
 
     public static Fonts loadFonts(Path mul) throws IOException {
@@ -297,6 +343,10 @@ public class UOFiles implements AutoCloseable {
         return gumps;
     }
 
+    public void saveGumps(Path dir) throws IOException {
+        saveToDir(gumps, dir);
+    }
+
     public static Gumps loadGumps(Path idx, Path mul) throws IOException {
         return Gumps.open(idx, mul);
     }
@@ -315,6 +365,10 @@ public class UOFiles implements AutoCloseable {
             hues = loadHuesFromDir(filePath);
         }
         return hues;
+    }
+
+    public void saveHues(Path dir) throws IOException {
+        saveToDir(hues, dir);
     }
 
     public static Hues loadHues(Path mul) throws IOException {
@@ -341,6 +395,10 @@ public class UOFiles implements AutoCloseable {
         return map;
     }
 
+    public void saveMap(Path dir) throws IOException {
+        saveToDir(map, dir);
+    }
+
     public static Map loadMap(Path mul) throws IOException {
         return Map.open(mul);
     }
@@ -363,6 +421,10 @@ public class UOFiles implements AutoCloseable {
             radarcol = loadRadarcolFromDir(filePath);
         }
         return radarcol;
+    }
+
+    public void saveRadarcol(Path dir) throws IOException {
+        saveToDir(radarcol, dir);
     }
 
     public static Radarcol loadRadarcol(Path mul) throws IOException {
@@ -389,6 +451,10 @@ public class UOFiles implements AutoCloseable {
         return sounds;
     }
 
+    public void saveSounds(Path dir) throws IOException {
+        saveToDir(sounds, dir);
+    }
+
     public static Sounds loadSounds(Path idx, Path mul) throws IOException {
         return Sounds.open(idx, mul);
     }
@@ -407,6 +473,10 @@ public class UOFiles implements AutoCloseable {
             statics = loadStaticsFromDir(filePath);
         }
         return statics;
+    }
+
+    public void saveStatics(Path dir) throws IOException {
+        saveToDir(statics, dir);
     }
 
     public static Statics loadStatics(Path idx, Path mul) throws IOException {
@@ -429,6 +499,10 @@ public class UOFiles implements AutoCloseable {
         return tiledata;
     }
 
+    public void saveTileData(Path dir) throws IOException {
+        saveToDir(tiledata, dir);
+    }
+
     public static TileData loadTileData(Path mul) throws IOException {
         return TileData.load(mul);
     }
@@ -448,50 +522,58 @@ public class UOFiles implements AutoCloseable {
 
     public Body getBody() throws IOException {
         if (body == null) {
-            body = loadBodyFromDir(filePath);
+            body = loadBodyFromDir(filePath, defsCharset);
         }
         return body;
     }
 
-    public static Body loadBody(Path mul) throws IOException {
-        return Body.load(mul);
+    public void saveBody(Path dir) throws IOException {
+        saveToDir(body, dir, defsCharset);
     }
 
-    public static Body loadBodyFromDir(Path dir) throws IOException {
-        return loadBody(dir.resolve(BODY_DEF));
+    public static Body loadBody(Path mul, Charset charset) throws IOException {
+        return Body.load(mul, charset);
     }
 
-    public static void save(Body body, Path mul) throws IOException {
-        throw new UnsupportedOperationException();
+    public static Body loadBodyFromDir(Path dir, Charset charset) throws IOException {
+        return loadBody(dir.resolve(BODY_DEF), charset);
     }
 
-    public static void saveToDir(Body body, Path dir) throws IOException {
+    public static void save(Body body, Path mul, Charset charset) throws IOException {
+        body.save(Files.newOutputStream(mul), charset);
+    }
+
+    public static void saveToDir(Body body, Path dir, Charset charset) throws IOException {
         Files.createDirectories(dir);
-        save(body, dir.resolve(BODY_DEF));
+        save(body, dir.resolve(BODY_DEF), charset);
     }
 
     public BodyConv getBodyConv() throws IOException {
         if (bodyConv == null) {
-            bodyConv = loadBodyConvFromDir(filePath);
+            bodyConv = loadBodyConvFromDir(filePath, defsCharset);
         }
         return bodyConv;
     }
 
-    public static BodyConv loadBodyConv(Path mul) throws IOException {
-        return BodyConv.load(mul);
+    public void saveBodyConv(Path dir) throws IOException {
+        saveToDir(bodyConv, dir, defsCharset);
     }
 
-    public static BodyConv loadBodyConvFromDir(Path dir) throws IOException {
-        return loadBodyConv(dir.resolve(BODYCONV_DEF));
+    public static BodyConv loadBodyConv(Path mul, Charset charset) throws IOException {
+        return BodyConv.load(mul, charset);
     }
 
-    public static void save(BodyConv bodyConv, Path mul) throws IOException {
-        throw new UnsupportedOperationException();
+    public static BodyConv loadBodyConvFromDir(Path dir, Charset charset) throws IOException {
+        return loadBodyConv(dir.resolve(BODYCONV_DEF), charset);
     }
 
-    public static void saveToDir(BodyConv bodyConv, Path dir) throws IOException {
+    public static void save(BodyConv bodyConv, Path mul, Charset charset) throws IOException {
+        bodyConv.save(Files.newOutputStream(mul), charset);
+    }
+
+    public static void saveToDir(BodyConv bodyConv, Path dir, Charset charset) throws IOException {
         Files.createDirectories(dir);
-        save(bodyConv, dir.resolve(BODYCONV_DEF));
+        save(bodyConv, dir.resolve(BODYCONV_DEF), charset);
     }
 
     public UniFonts getUniFonts(int i) throws IOException {

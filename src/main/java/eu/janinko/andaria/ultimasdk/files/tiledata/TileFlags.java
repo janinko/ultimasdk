@@ -34,7 +34,11 @@ public class TileFlags {
         return sb.toString();
     }
 
-    int toInt() {
+    public String toHexString() {
+        return String.format("0x%08x", toInt());
+    }
+
+    public int toInt() {
         int ret = 0;
         for(TileFlag flag : flags){
             ret |= flag.getFlag();

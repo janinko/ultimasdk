@@ -10,9 +10,9 @@
     <url>http://janinko.eu/ultimasdk</url>
     <description>Ultima SDK</description>
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <version.lombok>1.18.26</version.lombok>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <version.lombok>1.18.36</version.lombok>
     </properties>
 
     <developers>
@@ -41,6 +41,12 @@
             <artifactId>lombok</artifactId>
             <version>${version.lombok}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

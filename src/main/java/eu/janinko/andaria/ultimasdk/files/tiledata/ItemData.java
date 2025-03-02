@@ -23,6 +23,12 @@ public final class ItemData extends TileDatum {
     private byte value; // Unknown5
     private byte height;
 
+    public ItemData(int id){
+        this.id = id;
+        this.name = "";
+        this.flags = new TileFlags();
+    }
+
     public ItemData(LittleEndianDataInputStream in) throws IOException {
         this.setFlags(new TileFlags(in.readInt()));
         this.setWeight(in.readByte());
